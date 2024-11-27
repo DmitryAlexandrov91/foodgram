@@ -1,1 +1,4 @@
 Django==3.2.16
+python-dotenv==1.0.1
+djangorestframework==3.12.4
+djoser==2.3.1
