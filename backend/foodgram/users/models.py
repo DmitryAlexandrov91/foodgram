@@ -13,10 +13,7 @@ class User(AbstractUser):
         'Имя пользователя',
         max_length=150,
         unique=True,
-        validators=[validators.RegexValidator(
-            regex='^[\w.@+-]+\z',
-            message='Недопустимое имя пользователя.')]
-            )
+        )
     first_name = models.CharField(
         'Имя',
         max_length=150
