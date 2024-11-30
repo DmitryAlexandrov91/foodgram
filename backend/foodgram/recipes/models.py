@@ -19,6 +19,7 @@ class Ingredient(models.Model):
         'Единица измерения',
         max_length=64
     )
+
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
@@ -138,7 +139,7 @@ class ShoppingCart(models.Model):
 
     def __str__(self):
         return f'Рецепт {self.recipe} в списке покупок у {self.user}'
-    
+
 
 class IngredientRecipe(models.Model):
     """Вспомогательная модель для связи Ингредиентов и Рецептов."""
