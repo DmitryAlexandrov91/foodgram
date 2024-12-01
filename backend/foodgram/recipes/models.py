@@ -3,8 +3,7 @@ from django.db import models
 
 from users.models import User
 
-MIN_COOKING_TIME = 1
-MIN_INGREDIENT_QUANITY = 1
+from api.constants import MIN_COOKING_TIME, MIN_INGREDIENT_QUANITY
 
 
 class Ingredient(models.Model):

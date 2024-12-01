@@ -9,4 +9,3 @@ class UserAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'username', 'email')
     list_display_links = ('username',)
-

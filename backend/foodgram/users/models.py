@@ -1,25 +1,27 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from api.constants import MAX_LENGTH_EMAIL, MAX_LENGTH_NAME
+
 
 class User(AbstractUser):
     """Модель пользователя."""
     email = models.EmailField(
         'Адрес электронной почты',
-        max_length=254,
+        max_length=MAX_LENGTH_EMAIL,
     )
     username = models.CharField(
         'Имя пользователя',
-        max_length=150,
+        max_length=MAX_LENGTH_NAME,
         unique=True,
         )
     first_name = models.CharField(
         'Имя',
-        max_length=150
+        max_length=MAX_LENGTH_NAME
     )
     last_name = models.CharField(
         'Фамилия',
-        max_length=150
+        max_length=MAX_LENGTH_NAME
     )
 
     def __str__(self):
