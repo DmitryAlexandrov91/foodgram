@@ -1,9 +1,9 @@
-from rest_framework import serializers
+from djoser.serializers import UserSerializer, UserCreateSerializer
 
 from users.models import User
 
 
-class ReadUserSerializer(serializers.ModelSerializer):
+class ReadUserSerializer(UserSerializer):
     """Сериализатор на чтение пользователя."""
 
     class Meta:
@@ -16,7 +16,7 @@ class ReadUserSerializer(serializers.ModelSerializer):
         )
 
 
-class CreateUserSerializer(serializers.ModelSerializer):
+class CreateUserSerializer(UserCreateSerializer):
     """Сериализатор на создание пользователя."""
 
     class Meta:

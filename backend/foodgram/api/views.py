@@ -1,10 +1,10 @@
-from rest_framework import viewsets
+from djoser.views import UserViewSet
 
 from users.models import User
 from .serializers import ReadUserSerializer, CreateUserSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(UserViewSet):
     queryset = User.objects.all()
 
     def get_serializer_class(self):

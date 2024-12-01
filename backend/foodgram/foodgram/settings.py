@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 from pathlib import Path
 
@@ -17,12 +18,13 @@ DEBUG = debug_bool_check()
 ALLOWED_HOSTS = get_allowed_hosts()
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework.authtoken',
     'rest_framework',
     'djoser',
     'users.apps.UsersConfig',
@@ -104,7 +106,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -119,5 +121,4 @@ DJOSER = {
         'user': 'api.serializers.ReadUserSerializer',
         'current_user': 'api.serializers.ReadUserSerializer',
     },
-    'HIDE_USERS': False,
 }
