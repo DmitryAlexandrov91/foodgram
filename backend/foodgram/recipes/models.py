@@ -65,7 +65,7 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        verbose_name='Название ингридиента'
+        verbose_name='Ингредиенты',
     )
     tags = models.ManyToManyField(
         Tag,
@@ -162,8 +162,8 @@ class IngredientRecipe(models.Model):
     )
 
     class Meta:
-        verbose_name = 'ингредиенты'
-        verbose_name_plural = 'Ингредиенты'
+        verbose_name = 'Рецепты и ингредиенты'
+        verbose_name_plural = 'Рецепты и ингредиенты'
 
     def __str__(self):
         return f'В рецепте {self.recipe} есть ингредиент {self.ingredient}'
