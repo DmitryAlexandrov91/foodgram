@@ -1,7 +1,5 @@
-from django.contrib.auth import authenticate
 from djoser.serializers import UserSerializer, UserCreateSerializer
 from rest_framework import serializers
-from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from users.models import User
 
@@ -12,8 +10,9 @@ class ReadUserSerializer(UserSerializer):
     class Meta:
         model = User
         fields = (
-            'username',
             'email',
+            'id',
+            'username',
             'first_name',
             'last_name'
         )
@@ -32,3 +31,6 @@ class CreateUserSerializer(UserCreateSerializer):
             'last_name',
             'password'
         )
+
+    def to_representation(self, instance):
+        return ReadUserSerializer(instance).data

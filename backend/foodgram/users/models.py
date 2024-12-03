@@ -7,8 +7,9 @@ from api.constants import MAX_LENGTH_EMAIL, MAX_LENGTH_NAME
 class User(AbstractUser):
     """Модель пользователя."""
     email = models.EmailField(
-        'Адрес электронной почты',
+        'email',
         max_length=MAX_LENGTH_EMAIL,
+        unique=True,
     )
     username = models.CharField(
         'Имя пользователя',
@@ -23,6 +24,14 @@ class User(AbstractUser):
         'Фамилия',
         max_length=MAX_LENGTH_NAME
     )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    class Meta:
+
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+        ordering = ('id',)
 
     def __str__(self):
         return self.username
