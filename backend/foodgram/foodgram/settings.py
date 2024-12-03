@@ -112,8 +112,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
-    'SEARCH_PARAM': 'name',
 }
+
+AUTHENTICATION_BACKENDS = [
+    "djoser.auth_backends.LoginFieldBackend",
+]
 
 DJOSER = {
     'SERIALIZERS': {
@@ -121,4 +124,5 @@ DJOSER = {
         'user': 'api.serializers.ReadUserSerializer',
         'current_user': 'api.serializers.ReadUserSerializer',
     },
+    'LOGIN_FIELD': 'email',
 }

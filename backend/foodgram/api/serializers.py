@@ -1,4 +1,7 @@
+from django.contrib.auth import authenticate
 from djoser.serializers import UserSerializer, UserCreateSerializer
+from rest_framework import serializers
+from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from users.models import User
 
