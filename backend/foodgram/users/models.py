@@ -24,6 +24,12 @@ class User(AbstractUser):
         'Фамилия',
         max_length=MAX_LENGTH_NAME
     )
+    avatar = models.ImageField(
+        'Аватар',
+        upload_to='media/users',
+        blank=True
+    )
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
