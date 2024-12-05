@@ -25,9 +25,9 @@ class User(AbstractUser):
         max_length=MAX_LENGTH_NAME
     )
     avatar = models.ImageField(
-        'Аватар',
-        upload_to='media/users',
-        blank=True
+        upload_to='users/',
+        null=True,
+        default=None
     )
 
     USERNAME_FIELD = 'email'

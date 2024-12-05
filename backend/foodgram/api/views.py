@@ -1,4 +1,5 @@
 from djoser.views import UserViewSet
+import base64
 
 from users.models import User
 from .serializers import (
@@ -22,13 +23,19 @@ class UserViewSet(UserViewSet):
         return ReadUserSerializer
 
     @action(
-        methods=['put'],
+        methods=['put', 'delete'],
         detail=False,
         url_path='me/avatar')
-    def avatar_update(self, request):
-        serializer = AvatarSerializer(request.user, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-        return Response(
-            {'detail': 'Аватар успешно изменен!'},
-            status=status.HTTP_204_NO_CONTENT)
+    def avatar(self, request):
+        if request.method == 'DELETE':
+            request.user.avatar.delete()
+            return Response(
+                {'detail': 'Аватар успешно удалён'},
+            )
+        if request.method == 'PUT':
+            serializer = AvatarSerializer(request.user, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(
+                    {'avatar': request.user.image_url},
+                )

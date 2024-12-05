@@ -6,7 +6,8 @@ from api.views import UserViewSet
 app_name = 'api'
 
 router = DefaultRouter()
-router.register('users', UserViewSet)
+router.register(r'users', UserViewSet)
+
 
 urlpatterns = [
     path('', include(router.urls)),

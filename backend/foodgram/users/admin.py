@@ -8,4 +8,4 @@ class UserAdmin(admin.ModelAdmin):
     """IngredientAdmin model."""
 
     list_display = ('id', 'username', 'email')
-    list_display_links = ('username',)
+    list_display_links = ('id',)
