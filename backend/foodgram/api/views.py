@@ -1,16 +1,17 @@
 from djoser.views import UserViewSet
-import base64
 
 from users.models import User
+from recipes.models import Tag
 from .serializers import (
     ReadUserSerializer,
     CreateUserSerializer,
-    AvatarSerializer
+    AvatarSerializer,
+    TagSerialiser
 )
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import viewsets
 
 
 class UserViewSet(UserViewSet):
@@ -37,5 +38,14 @@ class UserViewSet(UserViewSet):
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return Response(
-                    {'avatar': request.user.image_url},
+                    {'avatar': request.user.avatar.url},
                 )
+
+
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerialiser
+    permission_classes = []
+    pagination_class = None
+
+

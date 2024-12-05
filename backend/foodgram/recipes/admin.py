@@ -25,7 +25,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ('id', 'pub_date', 'name', 'text')
     list_display_links = ('name',)
     fields = ('name', 'author', 'ingredients', 'text')
-    filter_horizontal = ('ingredients',)
+    filter_horizontal = ('ingredients', 'tags')
 
 
 @admin.register(Tag)

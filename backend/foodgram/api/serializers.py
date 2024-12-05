@@ -5,6 +5,7 @@ from rest_framework import serializers
 from django.core.files.base import ContentFile
 
 from users.models import User, Subscribe
+from recipes.models import Tag
 
 
 class Base64ImageField(serializers.ImageField):
@@ -21,7 +22,6 @@ class Base64ImageField(serializers.ImageField):
 class AvatarSerializer(serializers.ModelSerializer):
     avatar = Base64ImageField(required=False, allow_null=True)
     image_url = serializers.SerializerMethodField(
-        'get_avatar_url',
         read_only=True,
     )
 
@@ -45,7 +45,9 @@ class AvatarSerializer(serializers.ModelSerializer):
 
 class ReadUserSerializer(UserSerializer):
     """Сериализатор на чтение пользователя."""
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField(
+        read_only=True
+    )
 
     class Meta:
         model = User
@@ -61,7 +63,10 @@ class ReadUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        if request.user.is_anonymous:
+        try:
+            if request.user.is_anonymous:
+                return False
+        except AttributeError:
             return False
         return Subscribe.objects.filter(
             user=request.user,
@@ -85,3 +90,12 @@ class CreateUserSerializer(UserCreateSerializer):
 
     def to_representation(self, instance):
         return ReadUserSerializer(instance).data
+
+
+class TagSerialiser(serializers.ModelSerializer):
+    """Сериализатор на чтение тэгов."""
+
+    class Meta:
+        model = Tag
+        fields = '__all__'
+        read_only_fields = ['__all__',]
