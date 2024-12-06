@@ -1,12 +1,13 @@
 from djoser.views import UserViewSet
 
 from users.models import User
-from recipes.models import Tag
+from recipes.models import Tag, Recipe
 from .serializers import (
     ReadUserSerializer,
     CreateUserSerializer,
     AvatarSerializer,
-    TagSerialiser
+    TagSerialiser,
+    RecipeSerializer
 )
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
@@ -48,4 +49,9 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = []
     pagination_class = None
 
+
+class RecipeViewSet(viewsets.ModelViewSet):
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
+    permission_classes = []
 

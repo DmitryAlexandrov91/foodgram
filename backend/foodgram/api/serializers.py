@@ -5,7 +5,7 @@ from rest_framework import serializers
 from django.core.files.base import ContentFile
 
 from users.models import User, Subscribe
-from recipes.models import Tag
+from recipes.models import Tag, Recipe
 
 
 class Base64ImageField(serializers.ImageField):
@@ -99,3 +99,11 @@ class TagSerialiser(serializers.ModelSerializer):
         model = Tag
         fields = '__all__'
         read_only_fields = ['__all__',]
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор модели рецептов."""
+
+    class Meta:
+        model = Recipe
+        fields = '__all__'
