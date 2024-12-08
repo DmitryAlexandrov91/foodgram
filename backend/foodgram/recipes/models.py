@@ -66,6 +66,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name='Ингредиенты',
+        through='IngredientInRecipe',
     )
     tags = models.ManyToManyField(
         Tag,
@@ -95,8 +96,11 @@ class Recipe(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
+    def __str__(self):
+        return self.name
 
-class Favourites(models.Model):
+
+class Favorites(models.Model):
     """Модель избранного."""
 
     user = models.ForeignKey(
@@ -140,32 +144,32 @@ class ShoppingCart(models.Model):
         return f'Рецепт {self.recipe} в списке покупок у {self.user}'
 
 
-class IngredientRecipe(models.Model):
+class IngredientInRecipe(models.Model):
     """Вспомогательная модель для связи Ингредиентов и Рецептов."""
 
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        verbose_name='Ингредиент',
+        related_name='ingredient'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='ingredient_amounts',
         verbose_name='Рецепт',
+        related_name='recipe'
     )
-    quantity = models.PositiveSmallIntegerField(
+    amount = models.PositiveSmallIntegerField(
         'Количество',
         validators=(validators.MinValueValidator(
             MIN_INGREDIENT_QUANITY, message='Кол-во ингредиентов не менее 1'
             ),
         ),
-        default=MIN_INGREDIENT_QUANITY
+        default=MIN_INGREDIENT_QUANITY,
     )
 
     class Meta:
-        verbose_name = 'Рецепты и ингредиенты'
-        verbose_name_plural = 'Рецепты и ингредиенты'
+        verbose_name = 'Ингредиент в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
 
     def __str__(self):
         return f'В рецепте {self.recipe} есть ингредиент {self.ingredient}'

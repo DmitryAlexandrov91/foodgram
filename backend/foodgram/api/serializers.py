@@ -5,7 +5,7 @@ from rest_framework import serializers
 from django.core.files.base import ContentFile
 
 from users.models import User, Subscribe
-from recipes.models import Tag, Recipe
+from recipes.models import Tag, Recipe, IngredientInRecipe, Ingredient
 
 
 class Base64ImageField(serializers.ImageField):
@@ -92,7 +92,7 @@ class CreateUserSerializer(UserCreateSerializer):
         return ReadUserSerializer(instance).data
 
 
-class TagSerialiser(serializers.ModelSerializer):
+class TagSerializer(serializers.ModelSerializer):
     """Сериализатор на чтение тэгов."""
 
     class Meta:
@@ -101,9 +101,38 @@ class TagSerialiser(serializers.ModelSerializer):
         read_only_fields = ['__all__',]
 
 
-class RecipeSerializer(serializers.ModelSerializer):
-    """Сериализатор модели рецептов."""
+class IngredientSerializer(serializers.ModelSerializer):
+    """Сериализатор модели ингредиентов."""
+
+    class Meta:
+        model = Ingredient
+        fields = '__all__'
+
+
+class IngredientInRecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор вспомогательной модели рецептов и ингредиентов."""
+    id = serializers.ReadOnlyField()
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit'
+        )
+
+    class Meta:
+        model = IngredientInRecipe
+        fields = ('id', 'name', 'measurement_unit', 'amount')
+
+
+class RecipeReadSerializer(serializers.ModelSerializer):
+    """Сериализатор для чтения рецептов."""
+    tags = TagSerializer(
+        many=True,
+    )
+    author = ReadUserSerializer()
+    ingredients = IngredientInRecipeSerializer(
+        many=True,
+        source='recipe'
+    )
 
     class Meta:
         model = Recipe
-        fields = '__all__'
+        exclude = ['pub_date']

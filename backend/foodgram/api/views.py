@@ -1,13 +1,14 @@
 from djoser.views import UserViewSet
 
 from users.models import User
-from recipes.models import Tag, Recipe
+from recipes.models import Tag, Recipe, Ingredient
 from .serializers import (
     ReadUserSerializer,
     CreateUserSerializer,
     AvatarSerializer,
-    TagSerialiser,
-    RecipeSerializer
+    TagSerializer,
+    RecipeReadSerializer,
+    IngredientSerializer
 )
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
@@ -27,7 +28,7 @@ class UserViewSet(UserViewSet):
     @action(
         methods=['put', 'delete'],
         detail=False,
-        url_path='me/avatar')
+        url_path='me-avatar')
     def avatar(self, request):
         if request.method == 'DELETE':
             request.user.avatar.delete()
@@ -45,13 +46,18 @@ class UserViewSet(UserViewSet):
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
-    serializer_class = TagSerialiser
+    serializer_class = TagSerializer
     permission_classes = []
     pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
+    serializer_class = RecipeReadSerializer
     permission_classes = []
 
+
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    permission_classes = []

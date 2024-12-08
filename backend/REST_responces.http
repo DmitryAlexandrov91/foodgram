@@ -45,3 +45,6 @@ Content-Type: application/json
     "last_name": "ololyev",
     "password": "4819411x"
 }
+
+###
+GET http://127.0.0.1:8000/api/recipes/

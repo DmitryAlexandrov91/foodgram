@@ -15,6 +15,8 @@ class User(AbstractUser):
         'Имя пользователя',
         max_length=MAX_LENGTH_NAME,
         unique=True,
+        blank=True,
+        null=True,
         )
     first_name = models.CharField(
         'Имя',
@@ -26,6 +28,7 @@ class User(AbstractUser):
     )
     avatar = models.ImageField(
         upload_to='users/',
+        blank=True,
         null=True,
         default=None
     )
