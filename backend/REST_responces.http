@@ -8,19 +8,19 @@ Content-Type: application/json
 
 ###
 GET http://127.0.0.1:8000/api/users
-Authorization: Token e051b74c527d0e0704e773fe61dda077c26f987d
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 
 
 ###
 GET http://127.0.0.1:8000/api/users/me/
-Authorization: Token e051b74c527d0e0704e773fe61dda077c26f987d
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 
 ###
 PUT http://127.0.0.1:8000/api/users/me/avatar/
 Content-Type: application/json
-Authorization: Token e051b74c527d0e0704e773fe61dda077c26f987d
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 {
   "avatar": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg=="
@@ -28,7 +28,7 @@ Authorization: Token e051b74c527d0e0704e773fe61dda077c26f987d
 
 ###
 DELETE http://127.0.0.1:8000/api/users/me/avatar/
-Authorization: Token e051b74c527d0e0704e773fe61dda077c26f987d
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 
 ###
@@ -48,3 +48,6 @@ Content-Type: application/json
 
 ###
 GET http://127.0.0.1:8000/api/recipes/
+
+###
+GET http://127.0.0.1:8000/api/ingredients/

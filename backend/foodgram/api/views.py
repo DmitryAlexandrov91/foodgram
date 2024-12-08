@@ -7,7 +7,8 @@ from .serializers import (
     CreateUserSerializer,
     AvatarSerializer,
     TagSerializer,
-    RecipeReadSerializer,
+    ReadRecipeSerializer,
+    CreateRecipeSerializer,
     IngredientSerializer
 )
 from rest_framework.pagination import LimitOffsetPagination
@@ -28,7 +29,7 @@ class UserViewSet(UserViewSet):
     @action(
         methods=['put', 'delete'],
         detail=False,
-        url_path='me-avatar')
+        url_path='me/avatar')
     def avatar(self, request):
         if request.method == 'DELETE':
             request.user.avatar.delete()
@@ -53,8 +54,12 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeReadSerializer
     permission_classes = []
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CreateRecipeSerializer
+        return ReadRecipeSerializer
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):

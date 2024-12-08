@@ -15,6 +15,13 @@ class IngredientRecipeInline(admin.StackedInline):
     extra = 1
 
 
+class TagRecipeInline(admin.StackedInline):
+    """For IngredientAdmin model."""
+
+    model = Recipe
+    extra = 1
+
+
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     """IngredientAdmin model."""
@@ -41,7 +48,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ('id', 'pub_date', 'name', 'text')
     list_display_links = ('name',)
     fields = ('name', 'author', 'text', 'tags')
-    filter_horizontal = ('ingredients',)
+    search_fields = ('name',)
 
 
 @admin.register(Tag)
@@ -51,6 +58,7 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug')
     list_editable = ('slug',)
     list_display_links = ('name',)
+    fields = ('name', 'slug')
     filter_horizontal = ('recipe',)
 
 
