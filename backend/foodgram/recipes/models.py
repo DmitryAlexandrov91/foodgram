@@ -100,7 +100,7 @@ class Recipe(models.Model):
         return self.name
 
 
-class Favorites(models.Model):
+class Favorite(models.Model):
     """Модель избранного."""
 
     user = models.ForeignKey(
@@ -150,13 +150,13 @@ class IngredientInRecipe(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='ingredient'
+        related_name='ingredientinrecipe_ingredient'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
-        related_name='recipe'
+        related_name='ingredientinrecipe_recipe'
     )
     amount = models.PositiveSmallIntegerField(
         'Количество',

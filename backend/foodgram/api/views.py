@@ -14,7 +14,7 @@ from .serializers import (
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 
 
 class UserViewSet(UserViewSet):
@@ -55,11 +55,16 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = []
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name')
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action in ('create', 'put'):
             return CreateRecipeSerializer
         return ReadRecipeSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
