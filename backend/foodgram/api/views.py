@@ -9,12 +9,13 @@ from .serializers import (
     TagSerializer,
     ReadRecipeSerializer,
     CreateRecipeSerializer,
-    IngredientSerializer
+    IngredientSerializer,
 )
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, filters
+from rest_framework.permissions import SAFE_METHODS
 
 
 class UserViewSet(UserViewSet):
@@ -59,12 +60,29 @@ class RecipeViewSet(viewsets.ModelViewSet):
     search_fields = ('name')
 
     def get_serializer_class(self):
-        if self.action in ('create', 'put'):
-            return CreateRecipeSerializer
-        return ReadRecipeSerializer
+        if self.action in SAFE_METHODS:
+            return ReadRecipeSerializer
+        return CreateRecipeSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    def destroy(self, request, pk=None):
+        recipe = Recipe.objects.filter(pk=pk)
+        recipe.delete()
+        return Response(
+            {'detail': 'Рецепт успешно удалён'}
+        )
+
+    @action(
+        detail=True,
+        methods=['get'],
+        url_path='get_link')
+    def get_short_link(self, request, pk=None):
+        recipe = Recipe.objects.get(pk=pk)
+        return Response(
+                    {"short-link": recipe.name}
+                )
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):

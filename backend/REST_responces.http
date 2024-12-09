@@ -51,3 +51,32 @@ GET http://127.0.0.1:8000/api/recipes/
 
 ###
 GET http://127.0.0.1:8000/api/ingredients/
+
+
+###
+POST http://127.0.0.1:8000/api/recipes/
+Content-Type: application/json
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
+
+{
+  "ingredients": [
+    {
+      "id": 1500,
+      "amount": 100
+    }
+  ],
+  "tags": [
+    2
+  ],
+  "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+  "name": "Рецепт для Тимофея",
+  "text": "Тест POST запроса",
+  "cooking_time": 10
+}
+###
+DELETE http://127.0.0.1:8000/api/recipes/8/
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
+
+###
+GET http://127.0.0.1:8000/api/recipes/3/get_link/
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
