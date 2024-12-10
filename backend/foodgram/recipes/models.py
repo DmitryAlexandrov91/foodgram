@@ -137,11 +137,11 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Покупки'
-        verbose_name_plural = 'Покупки'
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Список покупок'
 
     def __str__(self):
-        return f'Рецепт {self.recipe} в списке покупок у {self.user}'
+        return f'"{self.recipe}" в списке покупок у {self.user}'
 
 
 class IngredientInRecipe(models.Model):
@@ -168,8 +168,8 @@ class IngredientInRecipe(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Ингредиент в рецепте'
+        verbose_name = 'Ингредиенты в рецепте'
         verbose_name_plural = 'Ингредиенты в рецепте'
 
     def __str__(self):
-        return f'В рецепте {self.recipe} есть ингредиент {self.ingredient}'
+        return f'№{self.recipe.id} "{self.recipe.name}"'

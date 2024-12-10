@@ -1,7 +1,10 @@
 from djoser.views import UserViewSet
 
+import csv
+from django.http import HttpResponse
+
 from users.models import User
-from recipes.models import Tag, Recipe, Ingredient
+from recipes.models import Tag, Recipe, Ingredient, ShoppingCart
 from .serializers import (
     ReadUserSerializer,
     CreateUserSerializer,
@@ -73,16 +76,32 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(
             {'detail': 'Рецепт успешно удалён'}
         )
+    
+    # @action(detail=False,
+    #         url_path='download_shopping_cart')
+    # def download_shopping_cart(self, request):
+    #     data = ShoppingCart.objects.filter(
+    #         user=request.user
+    #     )
+    #     response = HttpResponse(content_type='text/csv')
+    #     response['Content-Disposition'] = 'attachment; filename="shopping_cart.csv"'
+    #     writer = csv.writer(response)
+    #     # writer.writerow(['Поле 1', 'Поле 2'])
+    #     for obj in data:
+    #         print(obj)
+    
 
-    @action(
-        detail=True,
-        methods=['get'],
-        url_path='get_link')
-    def get_short_link(self, request, pk=None):
-        recipe = Recipe.objects.get(pk=pk)
-        return Response(
-                    {"short-link": recipe.name}
-                )
+    # @action(
+    #     detail=True,
+    #     methods=['get'],
+    #     url_path='get_link')
+    # def get_short_link(self, request, pk=None):
+    #     serializer = ShortUrlSerializer(
+    #         data=request.data)
+    #     if serializer.is_valid(raise_exception=True):
+    #         return Response(
+    #             {'short_url': serializer.validated_data}
+    #         )
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):

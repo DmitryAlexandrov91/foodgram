@@ -121,7 +121,7 @@ class ReadIngredientInRecipeSerializer(serializers.ModelSerializer):
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
-        )
+    )
 
     class Meta:
         model = IngredientInRecipe
@@ -193,15 +193,11 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
     def create_ingredient_in_recipe(self, ingredients, recipe):
         IngredientInRecipe.objects.bulk_create(
-            [
-                IngredientInRecipe(
-                    ingredient=ingredient.get('id'),
-                    recipe=recipe,
-                    amount=ingredient.get('amount')
-                    )
-                for ingredient in ingredients
-                ]
-                )
+            [IngredientInRecipe(
+                ingredient=ingredient.get('id'),
+                recipe=recipe,
+                amount=ingredient.get('amount')
+            ) for ingredient in ingredients])
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
@@ -232,5 +228,5 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return ReadRecipeSerializer(instance, context={
             'request': self.context.get('request')}
-            ).data
+        ).data
 

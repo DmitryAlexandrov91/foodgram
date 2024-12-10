@@ -4,21 +4,22 @@ from .models import (
     Ingredient,
     Recipe,
     IngredientInRecipe,
-    Tag
+    Tag,
+    ShoppingCart
 )
 
 
-class IngredientRecipeInline(admin.StackedInline):
-    """For IngredientAdmin model."""
+class IngredientInRecipeInline(admin.StackedInline):
+    """For IngredientAdmin and RecipeAdmin models."""
 
     model = IngredientInRecipe
     extra = 1
 
 
-class TagRecipeInline(admin.StackedInline):
-    """For IngredientAdmin model."""
+class ShoppingCartInline(admin.StackedInline):
+    """For RecipeAdmibn and UserAdmin models."""
 
-    model = Recipe
+    model = ShoppingCart
     extra = 1
 
 
@@ -27,7 +28,7 @@ class IngredientAdmin(admin.ModelAdmin):
     """IngredientAdmin model."""
 
     inlines = (
-        IngredientRecipeInline,
+        IngredientInRecipeInline,
     )
 
     list_display = ('id', 'name', 'measurement_unit')
@@ -42,7 +43,8 @@ class RecipeAdmin(admin.ModelAdmin):
     """RecipeAdmin model."""
 
     inlines = (
-        IngredientRecipeInline,
+        IngredientInRecipeInline,
+        ShoppingCartInline
     )
 
     list_display = ('id', 'pub_date', 'name', 'text')
@@ -70,3 +72,11 @@ class IngredientRecipeAdmin(admin.ModelAdmin):
     list_editable = ('amount',)
     list_display_links = ('recipe',)
     search_fields = ('ingredient',)
+
+
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
+
+    list_display = ('id', 'user', 'recipe')
+    list_filter = ('user',)
+    list_display_links = ('user',)
