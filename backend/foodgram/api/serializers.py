@@ -215,3 +215,13 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return ReadRecipeSerializer(instance, context={
             'request': self.context.get('request')}
         ).data
+
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    image = serializers.ReadOnlyField()
+    name = serializers.ReadOnlyField()
+    cooking_time = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')

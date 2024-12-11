@@ -1,11 +1,14 @@
+from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 
 import csv
-from django.http import HttpResponse
+import os
+from django.http import FileResponse
 from django.db.models import Sum
 
+
 from users.models import User
-from recipes.models import Tag, Recipe, Ingredient, ShoppingCart, IngredientInRecipe
+from recipes.models import Tag, Recipe, Ingredient, IngredientInRecipe, ShoppingCart
 from .serializers import (
     ReadUserSerializer,
     CreateUserSerializer,
@@ -14,6 +17,7 @@ from .serializers import (
     ReadRecipeSerializer,
     CreateRecipeSerializer,
     IngredientSerializer,
+    ShoppingCartSerializer
 )
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
@@ -21,6 +25,8 @@ from rest_framework.response import Response
 from rest_framework import viewsets, filters
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework import status
+
+from api.constants import CSV_FOLDER_PATH
 
 
 class UserViewSet(UserViewSet):
@@ -31,10 +37,6 @@ class UserViewSet(UserViewSet):
         if self.action == 'create':
             return CreateUserSerializer
         return ReadUserSerializer
-
-    def get_full_url(self, request, path):
-        full_url = request.build_absolute_uri(path)
-        return full_url
 
     @action(
         methods=['put', 'delete'],
@@ -91,22 +93,65 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 'ingredient__measurement_unit',
                 'recipe__name').annotate(
                 amount=Sum('amount')).order_by('recipe__name')
-        shopping_list = [(
+        shopping_cart = [(
             i["ingredient__name"],
             i["ingredient__measurement_unit"],
             i["amount"],
             i["recipe__name"]) for i in ingredients]
-
-        response = HttpResponse(content_type='text/csv')
-        response[
-            'Content-Disposition'] = 'attachment; filename="shopping_cart.csv"'
-        writer = csv.writer(response)
-        writer.writerow(
-            ['Ингредиент', 'Единица измерения', 'Количество', 'Рецепт']
+        file_path = os.path.join(
+            CSV_FOLDER_PATH,
+            f'shopping_cart_{request.user.username}.csv')
+        with open(file_path, mode='w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(
+                ['Ингредиент', 'Единица измерения', 'Количество', 'Рецепт']
             )
-        for ingredient in shopping_list:
-            writer.writerow(ingredient)
+            for ingredient in shopping_cart:
+                writer.writerow(ingredient)
+        response = FileResponse(
+            open(file_path, 'rb'),
+            content_type='text/csv')
+        response[
+            'Content-Disposition'] = (
+                f'attachment; filename="{os.path.basename(file_path)}"')
         return response
+
+    @action(
+        detail=True,
+        url_path='shopping_cart',
+        methods=['post', 'delete']
+    )
+    def shopping_cart(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, id=pk)
+        if request.method == 'POST':
+            serializer = ShoppingCartSerializer(
+                recipe,
+                data=request.data
+            )
+            serializer.is_valid(raise_exception=True)
+            if ShoppingCart.objects.filter(
+                user=request.user, recipe=recipe
+                    ).exists():
+                return Response(
+                    {'errors': 'Рецепт уже есть в списке покупок.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            ShoppingCart.objects.create(user=request.user, recipe=recipe)
+            modified_data = {
+                **serializer.data,
+                'image': request.build_absolute_uri(
+                            recipe.image.url)}
+            return Response(
+                modified_data,
+                status=status.HTTP_201_CREATED)
+        if request.method == 'DELETE':
+            recipe_in_shoppingc_cart = get_object_or_404(
+                ShoppingCart,
+                user=request.user,
+                recipe=recipe)
+            recipe_in_shoppingc_cart.delete()
+            return Response(
+                {'detail': 'Рецепт успешно удален из списка покупок.'})
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
