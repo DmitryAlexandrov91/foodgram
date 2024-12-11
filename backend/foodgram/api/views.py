@@ -2,9 +2,10 @@ from djoser.views import UserViewSet
 
 import csv
 from django.http import HttpResponse
+from django.db.models import Sum
 
 from users.models import User
-from recipes.models import Tag, Recipe, Ingredient, ShoppingCart
+from recipes.models import Tag, Recipe, Ingredient, ShoppingCart, IngredientInRecipe
 from .serializers import (
     ReadUserSerializer,
     CreateUserSerializer,
@@ -77,31 +78,26 @@ class RecipeViewSet(viewsets.ModelViewSet):
             {'detail': 'Рецепт успешно удалён'}
         )
     
-    # @action(detail=False,
-    #         url_path='download_shopping_cart')
-    # def download_shopping_cart(self, request):
-    #     data = ShoppingCart.objects.filter(
-    #         user=request.user
-    #     )
-    #     response = HttpResponse(content_type='text/csv')
-    #     response['Content-Disposition'] = 'attachment; filename="shopping_cart.csv"'
-    #     writer = csv.writer(response)
-    #     # writer.writerow(['Поле 1', 'Поле 2'])
-    #     for obj in data:
-    #         print(obj)
-    
+    @action(detail=False,
+            url_path='download_shopping_cart')
+    def download_shopping_cart(self, request):
+        recipes = ShoppingCart.objects.filter(
+            user=request.user
+        )
+        ingredients = IngredientInRecipe.objects.filter(
+            recipe__shopping_cart__user=request.user).values(
+                'ingredient__name',
+                'ingredient__measurement_unit').annotate(
+                amount=Sum('amount'))
+        print(ingredients)
 
-    # @action(
-    #     detail=True,
-    #     methods=['get'],
-    #     url_path='get_link')
-    # def get_short_link(self, request, pk=None):
-    #     serializer = ShortUrlSerializer(
-    #         data=request.data)
-    #     if serializer.is_valid(raise_exception=True):
-    #         return Response(
-    #             {'short_url': serializer.validated_data}
-    #         )
+        # response = HttpResponse(content_type='text/csv')
+        # response['Content-Disposition'] = 'attachment; filename="shopping_cart.csv"'
+        # writer = csv.writer(response)
+        # writer.writerow(['Рецепт'])
+        # for recipe in recipes:
+        #     writer.writerow([recipe.recipe])
+        # return response
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):

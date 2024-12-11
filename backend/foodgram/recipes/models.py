@@ -133,7 +133,8 @@ class ShoppingCart(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        verbose_name='Рецепт'
+        verbose_name='Рецепт',
+        related_name='shopping_cart'
     )
 
     class Meta:
@@ -150,19 +151,19 @@ class IngredientInRecipe(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='ingredientinrecipe_ingredient'
+        related_name='ingredient'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
-        related_name='ingredientinrecipe_recipe'
+        related_name='recipe'
     )
     amount = models.PositiveSmallIntegerField(
         'Количество',
         validators=(validators.MinValueValidator(
             MIN_INGREDIENT_QUANITY, message='Кол-во ингредиентов не менее 1'
-            ),
+        ),
         ),
         default=MIN_INGREDIENT_QUANITY,
     )
