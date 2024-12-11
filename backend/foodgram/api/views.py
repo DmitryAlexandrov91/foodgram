@@ -81,27 +81,32 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(
             {'detail': 'Рецепт успешно удалён'}
         )
-    
+
     @action(detail=False,
             url_path='download_shopping_cart')
     def download_shopping_cart(self, request):
-        recipes = ShoppingCart.objects.filter(
-            user=request.user
-        )
         ingredients = IngredientInRecipe.objects.filter(
             recipe__shopping_cart__user=request.user).values(
                 'ingredient__name',
-                'ingredient__measurement_unit').annotate(
-                amount=Sum('amount'))
-        print(ingredients)
+                'ingredient__measurement_unit',
+                'recipe__name').annotate(
+                amount=Sum('amount')).order_by('recipe__name')
+        shopping_list = [(
+            i["ingredient__name"],
+            i["ingredient__measurement_unit"],
+            i["amount"],
+            i["recipe__name"]) for i in ingredients]
 
-        # response = HttpResponse(content_type='text/csv')
-        # response['Content-Disposition'] = 'attachment; filename="shopping_cart.csv"'
-        # writer = csv.writer(response)
-        # writer.writerow(['Рецепт'])
-        # for recipe in recipes:
-        #     writer.writerow([recipe.recipe])
-        # return response
+        response = HttpResponse(content_type='text/csv')
+        response[
+            'Content-Disposition'] = 'attachment; filename="shopping_cart.csv"'
+        writer = csv.writer(response)
+        writer.writerow(
+            ['Ингредиент', 'Единица измерения', 'Количество', 'Рецепт']
+            )
+        for ingredient in shopping_list:
+            writer.writerow(ingredient)
+        return response
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
