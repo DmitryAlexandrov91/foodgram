@@ -32,6 +32,10 @@ class UserViewSet(UserViewSet):
             return CreateUserSerializer
         return ReadUserSerializer
 
+    def get_full_url(self, request, path):
+        full_url = request.build_absolute_uri(path)
+        return full_url
+
     @action(
         methods=['put', 'delete'],
         detail=False,
@@ -46,8 +50,8 @@ class UserViewSet(UserViewSet):
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return Response(
-                    {'avatar': request.user.avatar.url},
-                )
+                    {'avatar': request.build_absolute_uri(
+                        request.user.avatar.url)})
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
