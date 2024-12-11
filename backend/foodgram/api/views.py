@@ -20,6 +20,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, filters
 from rest_framework.permissions import SAFE_METHODS
+from rest_framework import status
 
 
 class UserViewSet(UserViewSet):
@@ -39,8 +40,7 @@ class UserViewSet(UserViewSet):
         if request.method == 'DELETE':
             request.user.avatar.delete()
             return Response(
-                {'detail': 'Аватар успешно удалён'},
-            )
+                status=status.HTTP_204_NO_CONTENT)
         if request.method == 'PUT':
             serializer = AvatarSerializer(request.user, data=request.data)
             if serializer.is_valid(raise_exception=True):

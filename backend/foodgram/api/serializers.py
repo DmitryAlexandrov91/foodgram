@@ -22,25 +22,15 @@ class Base64ImageField(serializers.ImageField):
 
 
 class AvatarSerializer(serializers.ModelSerializer):
-    avatar = Base64ImageField(required=False, allow_null=True)
-    image_url = serializers.SerializerMethodField(
-        read_only=True,
-    )
+    avatar = Base64ImageField()
 
     class Meta:
         model = User
-        fields = ['avatar', 'image_url']
-
-    def get_image_url(self, obj):
-        if obj.avatar:
-            return obj.avatar.url
-        return None
+        fields = ['avatar',]
 
     def update(self, instance, validated_data):
         instance.avatar = validated_data.get(
-            'avatar', self.get_image_url(instance)
-        )
-        instance.image_url = self.get_image_url(instance)
+            'avatar', None)
         instance.save()
         return instance
 
