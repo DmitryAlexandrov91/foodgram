@@ -2,18 +2,12 @@ POST http://127.0.0.1:8000/api/auth/token/login
 Content-Type: application/json
 
 {
-    "email": "alexandrov.dm@bk.ru",
+    "email": "user@mail.ru",
     "password": "4819411x"
 }
 
 ###
 GET http://127.0.0.1:8000/api/users
-Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
-
-
-
-###
-GET http://127.0.0.1:8000/api/users/me/avatar
 Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 
@@ -39,49 +33,96 @@ POST http://127.0.0.1:8000/api/users/
 Content-Type: application/json
 
 {
-    "username": "ololouser",
-    "email": "ololo@mail.ru",
-    "first_name": "ololo",
-    "last_name": "ololyev",
+    "username": "test_user",
+    "email": "user@mail.ru",
+    "first_name": "test",
+    "last_name": "testovich",
     "password": "4819411x"
 }
 
 ###
 GET http://127.0.0.1:8000/api/recipes/
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
+
 
 ###
 GET http://127.0.0.1:8000/api/ingredients/
 
 
 ###
-POST http://127.0.0.1:8000/api/recipes/
+PATCH http://127.0.0.1:8000/api/recipes/1/
 Content-Type: application/json
 Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 {
   "ingredients": [
     {
-      "id": 1500,
-      "amount": 100
+      "id": 1988,
+      "amount": 20
+    },
+    {
+      "id": 1646,
+      "amount": 5
     }
   ],
   "tags": [
-    2
+    3
   ],
   "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
-  "name": "Рецепт для Тимофея",
-  "text": "Тест POST запроса",
-  "cooking_time": 10
+  "name": "Бутерброд с маслом.",
+  "text": "Только лишь избранные могут себе позволить насладиться этим божественным сочетанием вкусов.",
+  "cooking_time": 1
 }
 ###
 DELETE http://127.0.0.1:8000/api/recipes/8/
 Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 ###
-GET http://127.0.0.1:8000/api/recipes/3/get_link/
+GET http://127.0.0.1:8000/api/recipes/10/get-link/
 Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 
 ###
 GET http://127.0.0.1:8000/api/recipes/download_shopping_cart
 Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
+
+
+###
+POST http://127.0.0.1:8000/api/recipes/1/shopping_cart/
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
+
+###
+DELETE http://127.0.0.1:8000/api/recipes/1/shopping_cart/
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
+
+###
+GET http://127.0.0.1:8000/api/recipes/1/get-link/
+
+
+###
+POST http://127.0.0.1:8000/api/recipes/1/favorite/
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
+
+###
+DELETE http://127.0.0.1:8000/api/recipes/1/favorite/
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
+
+
+###
+GET http://127.0.0.1:8000/api/users/subscriptions
+Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
+
+
+# Токен юзера Test_user - 7f93d8845df820ddedd01223c14f3f0412ad7150
+###
+GET http://127.0.0.1:8000/api/users/subscriptions
+Authorization: Token 7f93d8845df820ddedd01223c14f3f0412ad7150
+
+
+###
+DELETE http://127.0.0.1:8000/api/users/1/subscribe/
+Authorization: Token 7f93d8845df820ddedd01223c14f3f0412ad7150
+
+###
+POST http://127.0.0.1:8000/api/users/1/subscribe/
+Authorization: Token 7f93d8845df820ddedd01223c14f3f0412ad7150

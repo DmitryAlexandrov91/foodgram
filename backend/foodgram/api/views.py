@@ -1,8 +1,13 @@
-from django.shortcuts import get_object_or_404
-from djoser.views import UserViewSet
-
 import csv
 import os
+
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import viewsets, filters
+from rest_framework.permissions import SAFE_METHODS
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 from django.http import FileResponse
 from django.db.models import Sum
 
@@ -20,14 +25,8 @@ from .serializers import (
     ShoppingCartAndFavoriteSerializer,
     SubscribeSerializer
 )
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework import viewsets, filters
-from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
-from rest_framework import status
-
 from api.constants import CSV_FOLDER_PATH
+from djoser.views import UserViewSet
 
 
 class UserViewSet(UserViewSet):
@@ -69,6 +68,42 @@ class UserViewSet(UserViewSet):
             many=True,
             context={'request': request})
         return self.get_paginated_response(serializer.data)
+
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        url_path='subscribe'
+    )
+    def subscribe(self, request, id=None):
+        author = get_object_or_404(User, pk=id)
+        user = self.request.user
+        if request.method == 'POST':
+            if author == user:
+                return Response(
+                    {"errors": "Нельзя подписаться на самого себя."},
+                    status=status.HTTP_400_BAD_REQUEST)
+            if Subscribe.objects.filter(
+                author=author, user=user
+            ).exists():
+                return Response(
+                    {"errors": "Вы уже подписаны на этого пользователя."},
+                    status=status.HTTP_400_BAD_REQUEST)
+            Subscribe.objects.create(author=author, user=user)
+            serializer = SubscribeSerializer(
+                author,
+                context={'request': request})
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED)
+        if request.method == 'DELETE':
+            subscription = Subscribe.objects.filter(
+                author=author, user=user
+            )
+            if subscription.exists():
+                subscription.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(
+                {"errors": "Вы не подписаны на этого пользователя."},
+                status=status.HTTP_400_BAD_REQUEST)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
