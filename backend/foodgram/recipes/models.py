@@ -57,7 +57,8 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Автор'
+        verbose_name='Автор',
+        related_name='author'
     )
     pub_date = models.DateTimeField(
         'Дата публикации рецепта',
@@ -67,6 +68,7 @@ class Recipe(models.Model):
         Ingredient,
         verbose_name='Ингредиенты',
         through='IngredientInRecipe',
+        related_name='recipes',
     )
     tags = models.ManyToManyField(
         Tag,

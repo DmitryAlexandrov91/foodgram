@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import User
+from .models import User, Subscribe
 from recipes.models import Recipe
 from recipes.admin import ShoppingCartInline
 
@@ -23,3 +23,10 @@ class UserAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'username', 'email')
     list_display_links = ('id',)
+
+
+@admin.register(Subscribe)
+class SubscribeAdmin(admin.ModelAdmin):
+
+    list_display = ('id', 'user', 'author', 'created')
+    list_display_links = ('created',)

@@ -6,8 +6,9 @@ import os
 from django.http import FileResponse
 from django.db.models import Sum
 
-from users.models import User
-from recipes.models import Tag, Recipe, Ingredient, IngredientInRecipe, ShoppingCart
+from users.models import User, Subscribe
+from recipes.models import (
+    Tag, Recipe, Ingredient, IngredientInRecipe, ShoppingCart, Favorite)
 from .serializers import (
     ReadUserSerializer,
     CreateUserSerializer,
@@ -16,13 +17,14 @@ from .serializers import (
     ReadRecipeSerializer,
     CreateRecipeSerializer,
     IngredientSerializer,
-    ShoppingCartSerializer
+    ShoppingCartAndFavoriteSerializer,
+    SubscribeSerializer
 )
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, filters
-from rest_framework.permissions import SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework import status
 
 from api.constants import CSV_FOLDER_PATH
@@ -54,6 +56,19 @@ class UserViewSet(UserViewSet):
                     {'avatar': request.build_absolute_uri(
                         request.user.avatar.url)})
 
+    @action(
+        detail=False,
+        url_path='subscriptions'
+    )
+    def subscriptions(self, request):
+        queryset = User.objects.filter(subscribed_author__user=request.user)
+        paginated_queryset = self.paginate_queryset(queryset)
+        serializer = SubscribeSerializer(
+            paginated_queryset,
+            many=True,
+            context={'request': request})
+        return self.get_paginated_response(serializer.data)
+
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
@@ -80,7 +95,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = Recipe.objects.filter(pk=pk)
         recipe.delete()
         return Response(
-            {'detail': 'Рецепт успешно удалён'}
+            {'detail': 'Рецепт успешно удалён'},
+            status=status.HTTP_204_NO_CONTENT
         )
 
     @action(
@@ -135,7 +151,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
-            serializer = ShoppingCartSerializer(
+            serializer = ShoppingCartAndFavoriteSerializer(
                 recipe,
                 data=request.data
             )
@@ -143,10 +159,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if ShoppingCart.objects.filter(
                 user=request.user, recipe=recipe
                     ).exists():
-                return Response(
-                    {'errors': 'Рецепт уже есть в списке покупок.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response(status=status.HTTP_400_BAD_REQUEST)
             ShoppingCart.objects.create(user=request.user, recipe=recipe)
             modified_data = {
                 **serializer.data,
@@ -161,8 +174,38 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 user=request.user,
                 recipe=recipe)
             recipe_in_shopping_cart.delete()
-            return Response(
-                {'detail': 'Рецепт успешно удален из списка покупок.'})
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        pagination_class=None,
+        url_path='favorite'
+    )
+    def favorite(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, id=pk)
+        favorite = Favorite.objects.filter(
+            user=request.user,
+            recipe__id=pk)
+        if request.method == 'POST':
+            if favorite.exists():
+                return Response(
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            Favorite.objects.create(user=request.user, recipe=recipe)
+            serializer = ShoppingCartAndFavoriteSerializer(
+                recipe,
+                context={'request': request})
+            modified_data = {
+                **serializer.data,
+                'image': request.build_absolute_uri(
+                            recipe.image.url)}
+            return Response(modified_data, status=status.HTTP_201_CREATED)
+        if request.method == 'DELETE':
+            if favorite.exists():
+                favorite.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
