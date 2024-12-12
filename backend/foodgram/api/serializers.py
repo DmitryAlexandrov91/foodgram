@@ -248,13 +248,9 @@ class SubscribeSerializer(ReadUserSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get('request')
-        limit_recipes = request.query_params.get('recipes_limit')
-        if limit_recipes:
-            recipes = obj.author.all()[:(int(limit_recipes))]
-        else:
-            recipes = Recipe.objects.filter(
-                author=obj
-            )
+        recipes = Recipe.objects.filter(
+            author=obj
+        )
         context = {'request': request}
         return ShoppingCartAndFavoriteSerializer(
             recipes, many=True,

@@ -58,16 +58,16 @@ class UserViewSet(UserViewSet):
 
     @action(
         detail=False,
-        url_path='subscriptions'
+        url_path='subscriptions',
+        pagination_class=[LimitOffsetPagination,]
     )
     def subscriptions(self, request):
         queryset = User.objects.filter(subscribed_author__user=request.user)
-        paginated_queryset = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(
-            paginated_queryset,
+            queryset,
             many=True,
             context={'request': request})
-        return self.get_paginated_response(serializer.data)
+        return Response(serializer.data)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
