@@ -6,7 +6,6 @@ import os
 from django.http import FileResponse
 from django.db.models import Sum
 
-
 from users.models import User
 from recipes.models import Tag, Recipe, Ingredient, IngredientInRecipe, ShoppingCart
 from .serializers import (
@@ -84,6 +83,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
             {'detail': 'Рецепт успешно удалён'}
         )
 
+    @action(
+        detail=True,
+        url_path='get-link',
+        permission_classes=[]
+    )
+    def get_link(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, id=pk)
+        return Response(
+            {"short-link": request.build_absolute_uri(
+                recipe.image.url)}
+        )
+
     @action(detail=False,
             url_path='download_shopping_cart')
     def download_shopping_cart(self, request):
@@ -145,11 +156,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 modified_data,
                 status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
-            recipe_in_shoppingc_cart = get_object_or_404(
+            recipe_in_shopping_cart = get_object_or_404(
                 ShoppingCart,
                 user=request.user,
                 recipe=recipe)
-            recipe_in_shoppingc_cart.delete()
+            recipe_in_shopping_cart.delete()
             return Response(
                 {'detail': 'Рецепт успешно удален из списка покупок.'})
 
