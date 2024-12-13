@@ -1,5 +1,6 @@
 import csv
 import os
+import hashlib
 
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
@@ -10,6 +11,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
 from django.db.models import Sum
+from django.urls import reverse
 
 from users.models import User, Subscribe
 from recipes.models import (
@@ -23,7 +25,7 @@ from .serializers import (
     CreateRecipeSerializer,
     IngredientSerializer,
     ShoppingCartAndFavoriteSerializer,
-    SubscribeSerializer
+    SubscribeSerializer,
 )
 from api.constants import CSV_FOLDER_PATH
 from djoser.views import UserViewSet
@@ -138,13 +140,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         url_path='get-link',
-        permission_classes=[]
+        permission_classes=[],
     )
     def get_link(self, request, pk=None):
-        recipe = get_object_or_404(Recipe, id=pk)
+        recipe = Recipe.objects.filter(pk=pk)
+        if recipe.exists():
+            full_link = self.reverse_action('detail', args=[pk])
+            separator = full_link.find('api/')
+            start_link = full_link[:separator]
+            short_link = hashlib.md5(full_link.encode()).hexdigest()[:5]
+            result_link = start_link + short_link
+            return Response(
+                {'short-link': result_link})
         return Response(
-            {"short-link": request.build_absolute_uri(
-                recipe.image.url)}
+            {"detail": f"Рецепт с ID {pk} не найден."},
+            status=status.HTTP_404_NOT_FOUND
         )
 
     @action(detail=False,

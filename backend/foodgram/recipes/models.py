@@ -1,5 +1,6 @@
 from django.core import validators
 from django.db import models
+from django.urls import reverse
 
 from users.models import User
 
@@ -101,6 +102,9 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
+    def get_full_url(self,):
+        return reverse('recipes', kwargs={'pk': self.pk})
+
 
 class Favorite(models.Model):
     """Модель избранного."""
@@ -176,3 +180,5 @@ class IngredientInRecipe(models.Model):
 
     def __str__(self):
         return f'№{self.recipe.id} "{self.recipe.name}"'
+
+

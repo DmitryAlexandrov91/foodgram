@@ -3,7 +3,6 @@ import base64
 from djoser.serializers import UserSerializer, UserCreateSerializer
 from rest_framework import serializers
 from django.core.files.base import ContentFile
-from rest_framework.relations import SlugRelatedField
 
 from users.models import User, Subscribe
 from recipes.models import Tag, Recipe, IngredientInRecipe, Ingredient, Favorite, ShoppingCart
