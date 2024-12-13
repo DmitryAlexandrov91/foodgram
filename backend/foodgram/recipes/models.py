@@ -4,7 +4,14 @@ from django.urls import reverse
 
 from users.models import User
 
-from api.constants import MIN_COOKING_TIME, MIN_INGREDIENT_QUANITY
+from api.constants import (
+    MIN_RECIPE_COOKING_TIME,
+    MIN_RECIPE_INGREDIENT_QUANITY,
+    MAX_RECIPE_NAME_LENGHT,
+    MAX_INGREDIENT_NAME_LENGHT,
+    MAX_INGREDIENT_MEASUREMENT_UNIT_LENGHT,
+    MAX_TAG_NAME_LENGHT,
+    MAX_RECIPELINKS_SHORTLINK_LENGHT)
 
 
 class Ingredient(models.Model):
@@ -12,12 +19,12 @@ class Ingredient(models.Model):
 
     name = models.CharField(
         'Название ингредиента',
-        max_length=128
+        max_length=MAX_INGREDIENT_NAME_LENGHT
 
     )
     measurement_unit = models.CharField(
         'Единица измерения',
-        max_length=64
+        max_length=MAX_INGREDIENT_MEASUREMENT_UNIT_LENGHT
     )
 
     class Meta:
@@ -33,7 +40,7 @@ class Tag(models.Model):
 
     name = models.CharField(
         'Название тэга',
-        max_length=32,
+        max_length=MAX_TAG_NAME_LENGHT,
         unique=True,
     )
     slug = models.SlugField(
@@ -82,7 +89,7 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         'Название рецепта',
-        max_length=256
+        max_length=MAX_RECIPE_NAME_LENGHT
     )
     text = models.TextField(
         'Описание рецепта'
@@ -90,8 +97,8 @@ class Recipe(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления',
         validators=(validators.MinValueValidator(
-            MIN_COOKING_TIME, 'Не меньше 1 минуты!'),),
-        default=MIN_COOKING_TIME
+            MIN_RECIPE_COOKING_TIME, 'Не меньше 1 минуты!'),),
+        default=MIN_RECIPE_COOKING_TIME
     )
 
     class Meta:
@@ -122,7 +129,7 @@ class Favorite(models.Model):
 
     class Meta:
         verbose_name = 'Избранное'
-        verbose_name_plural = 'Избранные'
+        verbose_name_plural = 'Избранное'
 
     def __str__(self):
         return f'Рецепт {self.recipe} в избранном у {self.user}'
@@ -168,10 +175,11 @@ class IngredientInRecipe(models.Model):
     amount = models.PositiveSmallIntegerField(
         'Количество',
         validators=(validators.MinValueValidator(
-            MIN_INGREDIENT_QUANITY, message='Кол-во ингредиентов не менее 1'
+            MIN_RECIPE_INGREDIENT_QUANITY,
+            message='Кол-во ингредиентов не менее 1 ед.'
         ),
         ),
-        default=MIN_INGREDIENT_QUANITY,
+        default=MIN_RECIPE_INGREDIENT_QUANITY,
     )
 
     class Meta:
@@ -185,8 +193,11 @@ class IngredientInRecipe(models.Model):
 class RecipeLinks(models.Model):
     """Модель для хранения ссылок."""
 
-    original_link = models.URLField()
-    short_link = models.CharField(max_length=10)
+    original_link = models.URLField('Оригинальная ссылка')
+    short_link = models.CharField(
+        'Короткая ссылка',
+        max_length=MAX_RECIPELINKS_SHORTLINK_LENGHT
+        )
 
     class Meta:
         verbose_name = 'ссылки'

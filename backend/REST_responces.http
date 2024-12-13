@@ -78,7 +78,7 @@ DELETE http://127.0.0.1:8000/api/recipes/8/
 Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 ###
-GET http://127.0.0.1:8000/api/recipes/10/get-link/
+GET http://127.0.0.1:8000/api/recipes/5/get-link/
 Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 
@@ -96,7 +96,7 @@ DELETE http://127.0.0.1:8000/api/recipes/1/shopping_cart/
 Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 ###
-GET http://127.0.0.1:8000/api/recipes/10/get-link/
+GET http://127.0.0.1:8000/api/recipes/2/get-link/
 
 
 ###

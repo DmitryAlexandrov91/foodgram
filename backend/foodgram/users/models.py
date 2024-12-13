@@ -1,30 +1,32 @@
+"""Модели приложения users."""
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from api.constants import MAX_LENGTH_EMAIL, MAX_LENGTH_NAME
+from api.constants import MAX_USER_EMAIL_LENGTH, MAX_USER_NAME_LENGTH
 
 
 class User(AbstractUser):
     """Модель пользователя."""
+
     email = models.EmailField(
         'email',
-        max_length=MAX_LENGTH_EMAIL,
+        max_length=MAX_USER_EMAIL_LENGTH,
         unique=True,
     )
     username = models.CharField(
         'Имя пользователя',
-        max_length=MAX_LENGTH_NAME,
+        max_length=MAX_USER_NAME_LENGTH,
         unique=True,
         blank=True,
         null=True,
         )
     first_name = models.CharField(
         'Имя',
-        max_length=MAX_LENGTH_NAME
+        max_length=MAX_USER_NAME_LENGTH
     )
     last_name = models.CharField(
         'Фамилия',
-        max_length=MAX_LENGTH_NAME
+        max_length=MAX_USER_NAME_LENGTH
     )
     avatar = models.ImageField(
         upload_to='users/',
@@ -48,6 +50,7 @@ class User(AbstractUser):
 
 class Subscribe(models.Model):
     """Модель подписки."""
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

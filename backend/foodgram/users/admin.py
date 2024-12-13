@@ -1,32 +1,51 @@
+"""Настройка админ зоны приложения users."""
 from django.contrib import admin
 
 from .models import User, Subscribe
 from recipes.models import Recipe
-from recipes.admin import ShoppingCartInline
+from recipes.admin import ShoppingCartInline, FavoriteInline
 
 
 class RecipeInline(admin.StackedInline):
-    """For UserAdmin model."""
+    """Для модели UserAdmin."""
 
     model = Recipe
     extra = 1
 
 
+class FollowerInline(admin.StackedInline):
+    """Для модели UserAdmin."""
+
+    model = Subscribe
+    fk_name = "user"
+
+
+class SubscribedAuthorInline(admin.StackedInline):
+    """Для модели UserAdmin."""
+
+    model = Subscribe
+    fk_name = "author"
+
+
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    """IngredientAdmin model."""
+    """Настройка админки модели User."""
 
     inlines = (
         ShoppingCartInline,
-        RecipeInline
+        RecipeInline,
+        FavoriteInline,
+        FollowerInline,
+        SubscribedAuthorInline
     )
 
     list_display = ('id', 'username', 'email')
-    list_display_links = ('id',)
+    list_display_links = ('username',)
 
 
 @admin.register(Subscribe)
 class SubscribeAdmin(admin.ModelAdmin):
+    """Настройка админки модели Subscribe."""
 
     list_display = ('id', 'user', 'author', 'created')
     list_display_links = ('created',)

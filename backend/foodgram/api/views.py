@@ -6,7 +6,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, filters
-from rest_framework.permissions import SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, IsAuthenticatedOrReadOnly
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse, HttpResponseRedirect
@@ -28,7 +28,7 @@ from .serializers import (
     ShoppingCartAndFavoriteSerializer,
     SubscribeSerializer,
 )
-from api.constants import CSV_FOLDER_PATH
+from api.constants import CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT
 from djoser.views import UserViewSet
 
 
@@ -118,7 +118,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = []
+    permission_classes = [IsAuthenticatedOrReadOnly,]
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name')
 
@@ -142,7 +142,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         original_link = self.reverse_action('detail', args=[pk])
         separator = original_link.find('api/')
         start_link = original_link[:separator]
-        short_link = hashlib.md5(original_link.encode()).hexdigest()[:5]
+        short_link = hashlib.md5(
+            original_link.encode()).hexdigest()[
+                :MAX_RECIPELINKS_SHORTLINK_LENGHT]
         result_link = start_link + short_link
         if not RecipeLinks.objects.filter(
             original_link=original_link,
@@ -161,7 +163,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def get_link(self, request, pk=None):
         recipe = Recipe.objects.filter(pk=pk)
-        if recipe.exists():   
+        if recipe.exists():
             return Response(
                 {'short-link': self.short_link_create(pk)})
         return Response(

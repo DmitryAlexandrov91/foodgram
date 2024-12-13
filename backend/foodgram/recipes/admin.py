@@ -1,3 +1,4 @@
+"""Настройка админ зоны приложения recipes."""
 from django.contrib import admin
 
 from .models import (
@@ -5,27 +6,36 @@ from .models import (
     Recipe,
     IngredientInRecipe,
     Tag,
-    ShoppingCart
+    ShoppingCart,
+    RecipeLinks,
+    Favorite
 )
 
 
 class IngredientInRecipeInline(admin.StackedInline):
-    """For IngredientAdmin and RecipeAdmin models."""
+    """Для моделей IngredientAdmin и RecipeAdmin."""
 
     model = IngredientInRecipe
     extra = 1
 
 
 class ShoppingCartInline(admin.StackedInline):
-    """For RecipeAdmibn and UserAdmin models."""
+    """Для моделей RecipeAdmin и UserAdmin."""
 
     model = ShoppingCart
     extra = 1
 
 
+class FavoriteInline(admin.StackedInline):
+    """Для моделей RecipeAdmin и UserAdmin."""
+
+    model = Favorite
+    extra = 1
+
+
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    """IngredientAdmin model."""
+    """Настройка админки модели Ingredient."""
 
     inlines = (
         IngredientInRecipeInline,
@@ -40,11 +50,12 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    """RecipeAdmin model."""
+    """Настройка админки модели Recipe."""
 
     inlines = (
         IngredientInRecipeInline,
-        ShoppingCartInline
+        ShoppingCartInline,
+        FavoriteInline
     )
 
     list_display = ('id', 'pub_date', 'name', 'text')
@@ -55,7 +66,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    """TagAdmin model."""
+    """Настройка админки модели Tag."""
 
     list_display = ('id', 'name', 'slug')
     list_editable = ('slug',)
@@ -66,7 +77,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(IngredientInRecipe)
 class IngredientRecipeAdmin(admin.ModelAdmin):
-    """IngredientRecipeAdmin model."""
+    """Настройка админки модели IngredientInRecipe."""
 
     list_display = ('id', 'ingredient', 'recipe', 'amount')
     list_editable = ('amount',)
@@ -76,7 +87,24 @@ class IngredientRecipeAdmin(admin.ModelAdmin):
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
+    """Настройка админки модели ShoppingCart."""
 
     list_display = ('id', 'user', 'recipe')
     list_filter = ('user',)
     list_display_links = ('user',)
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    """Настройка админки модели Favorite."""
+
+    list_display = ('id', 'user', 'recipe')
+    list_display_links = ('recipe',)
+
+
+@admin.register(RecipeLinks)
+class RecipeLinksAdmin(admin.ModelAdmin):
+    """Настройка админки модели RecipeLinks."""
+
+    list_display = ('id', 'original_link', 'short_link')
+    list_filter = ('original_link',)
+    list_display_links = ('original_link',)
