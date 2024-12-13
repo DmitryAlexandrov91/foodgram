@@ -182,3 +182,15 @@ class IngredientInRecipe(models.Model):
         return f'№{self.recipe.id} "{self.recipe.name}"'
 
 
+class RecipeLinks(models.Model):
+    """Модель для хранения ссылок."""
+
+    original_link = models.URLField()
+    short_link = models.CharField(max_length=10)
+
+    class Meta:
+        verbose_name = 'ссылки'
+        verbose_name_plural = 'ссылки'
+
+    def __str__(self):
+        return self.short_link

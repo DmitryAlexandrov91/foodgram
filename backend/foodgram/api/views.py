@@ -9,13 +9,14 @@ from rest_framework import viewsets, filters
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponseRedirect
 from django.db.models import Sum
-from django.urls import reverse
+from rest_framework.views import APIView
 
 from users.models import User, Subscribe
 from recipes.models import (
-    Tag, Recipe, Ingredient, IngredientInRecipe, ShoppingCart, Favorite)
+    Tag, Recipe, Ingredient, IngredientInRecipe,
+    ShoppingCart, Favorite, RecipeLinks)
 from .serializers import (
     ReadUserSerializer,
     CreateUserSerializer,
@@ -137,6 +138,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
             status=status.HTTP_204_NO_CONTENT
         )
 
+    def short_link_create(self, pk):
+        original_link = self.reverse_action('detail', args=[pk])
+        separator = original_link.find('api/')
+        start_link = original_link[:separator]
+        short_link = hashlib.md5(original_link.encode()).hexdigest()[:5]
+        result_link = start_link + short_link
+        if not RecipeLinks.objects.filter(
+            original_link=original_link,
+            short_link=result_link
+        ).exists():
+            RecipeLinks.objects.create(
+                original_link=original_link,
+                short_link=result_link
+            )
+        return result_link
+
     @action(
         detail=True,
         url_path='get-link',
@@ -144,14 +161,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def get_link(self, request, pk=None):
         recipe = Recipe.objects.filter(pk=pk)
-        if recipe.exists():
-            full_link = self.reverse_action('detail', args=[pk])
-            separator = full_link.find('api/')
-            start_link = full_link[:separator]
-            short_link = hashlib.md5(full_link.encode()).hexdigest()[:5]
-            result_link = start_link + short_link
+        if recipe.exists():   
             return Response(
-                {'short-link': result_link})
+                {'short-link': self.short_link_create(pk)})
         return Response(
             {"detail": f"Рецепт с ID {pk} не найден."},
             status=status.HTTP_404_NOT_FOUND
@@ -258,3 +270,16 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = []
+
+
+class RedirectShortLink(APIView):
+    permission_classes = []
+
+    def get(self, request, hash_link):
+        link = request.build_absolute_uri(hash_link)
+        short_link = RecipeLinks.objects.get(short_link=link)
+        if short_link:
+            return HttpResponseRedirect(short_link.original_link)
+        return Response(
+            {"error": "Короткая ссылка не найдена"},
+            status=status.HTTP_404_NOT_FOUND)
