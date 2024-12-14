@@ -1,17 +1,18 @@
+"""Модели приложения recipes."""
 from django.core import validators
 from django.db import models
 from django.urls import reverse
 
-from users.models import User
 
 from api.constants import (
     MIN_RECIPE_COOKING_TIME,
     MIN_RECIPE_INGREDIENT_QUANITY,
     MAX_RECIPE_NAME_LENGHT,
-    MAX_INGREDIENT_NAME_LENGHT,
+    MAX_RECIPELINKS_SHORTLINK_LENGHT,
     MAX_INGREDIENT_MEASUREMENT_UNIT_LENGHT,
-    MAX_TAG_NAME_LENGHT,
-    MAX_RECIPELINKS_SHORTLINK_LENGHT)
+    MAX_INGREDIENT_NAME_LENGHT,
+    MAX_TAG_NAME_LENGHT)
+from users.models import User
 
 
 class Ingredient(models.Model):

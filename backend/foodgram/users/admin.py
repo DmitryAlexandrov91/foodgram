@@ -1,9 +1,9 @@
 """Настройка админ зоны приложения users."""
 from django.contrib import admin
 
-from .models import User, Subscribe
+from recipes.admin import FavoriteInline, ShoppingCartInline
 from recipes.models import Recipe
-from recipes.admin import ShoppingCartInline, FavoriteInline
+from .models import User, Subscribe
 
 
 class RecipeInline(admin.StackedInline):
