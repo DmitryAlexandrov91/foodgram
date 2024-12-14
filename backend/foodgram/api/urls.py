@@ -1,7 +1,9 @@
+"""Энопоинты приложения api."""
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from api.views import UserViewSet, TagViewSet, RecipeViewSet, IngredientViewSet, RedirectShortLink
+from api.views import IngredientViewSet, RecipeViewSet, TagViewSet, UserViewSet
+
 
 app_name = 'api'
 
@@ -16,5 +18,3 @@ urlpatterns = [
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
 ]
-
-

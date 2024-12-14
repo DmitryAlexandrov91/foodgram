@@ -1,22 +1,27 @@
+"""Представления api проекта foodgram."""
 import csv
-import os
 import hashlib
+import os
 
+
+from django.db.models import Sum
+from django.shortcuts import get_object_or_404
+from django.http import FileResponse, HttpResponseRedirect
+from djoser.views import UserViewSet
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticatedOrReadOnly
-from rest_framework import status
-from django.shortcuts import get_object_or_404
-from django.http import FileResponse, HttpResponseRedirect
-from django.db.models import Sum
 from rest_framework.views import APIView
 
-from users.models import User, Subscribe
+from api.constants import CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT
 from recipes.models import (
-    Tag, Recipe, Ingredient, IngredientInRecipe,
-    ShoppingCart, Favorite, RecipeLinks)
+    Favorite,
+    Ingredient, IngredientInRecipe,
+    Recipe, RecipeLinks,
+    ShoppingCart, Tag)
+from users.models import User, Subscribe
 from .serializers import (
     ReadUserSerializer,
     CreateUserSerializer,
@@ -28,8 +33,6 @@ from .serializers import (
     ShoppingCartAndFavoriteSerializer,
     SubscribeSerializer,
 )
-from api.constants import CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT
-from djoser.views import UserViewSet
 
 
 class UserViewSet(UserViewSet):

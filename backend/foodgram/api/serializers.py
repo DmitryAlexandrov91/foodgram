@@ -1,12 +1,15 @@
+"""Сериализаторы представлений приложения api."""
 import base64
 
-from djoser.serializers import UserSerializer, UserCreateSerializer
-from rest_framework import serializers
 from django.core.files.base import ContentFile
+from djoser.serializers import UserCreateSerializer, UserSerializer
+from rest_framework import serializers
 
-from users.models import User, Subscribe
 from recipes.models import (
-    Tag, Recipe, IngredientInRecipe, Ingredient, Favorite, ShoppingCart)
+    Favorite, Ingredient,
+    IngredientInRecipe, Recipe,
+    ShoppingCart, Tag)
+from users.models import User, Subscribe
 
 
 class Base64ImageField(serializers.ImageField):

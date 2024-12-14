@@ -1,4 +1,3 @@
-from datetime import timedelta
 import os
 from pathlib import Path
 
@@ -7,7 +6,10 @@ from dotenv import load_dotenv
 
 from .utils import debug_bool_check, get_allowed_hosts
 
+
 load_dotenv()
+
+PAGINATION_PAGE_SIZE = 10
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -112,8 +114,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 10,
+    'DEFAULT_PAGINATION_CLASS': (
+        'rest_framework.pagination.LimitOffsetPagination'),
+    'PAGE_SIZE': PAGINATION_PAGE_SIZE
 }
 
 AUTHENTICATION_BACKENDS = [
