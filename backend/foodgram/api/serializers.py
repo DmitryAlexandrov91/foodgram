@@ -1,7 +1,9 @@
 """Сериализаторы представлений приложения api."""
 import base64
+import re
 
 from django.core.files.base import ContentFile
+from django.core.exceptions import ValidationError
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
@@ -10,6 +12,8 @@ from recipes.models import (
     IngredientInRecipe, Recipe,
     ShoppingCart, Tag)
 from users.models import User, Subscribe
+from .constants import USERNAME_PATTERN
+# from .exceptions import UsernameAlreadyExists, EmailAlreadyExists
 
 
 class Base64ImageField(serializers.ImageField):
@@ -75,7 +79,8 @@ class CreateUserSerializer(UserCreateSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'username', 'first_name', 'last_name', 'password')
+        fields = ('email', 'id', 'username',
+                  'first_name', 'last_name', 'password')
         required_fields = (
             'email',
             'username',
@@ -84,8 +89,24 @@ class CreateUserSerializer(UserCreateSerializer):
             'password'
         )
 
-    def to_representation(self, instance):
-        return ReadUserSerializer(instance).data
+    def validate_username(self, value):
+        is_mutch = (re.match(
+            USERNAME_PATTERN,
+            value))
+        if not is_mutch:
+            raise ValidationError(f'Нельзя использовать имя {value}!')
+        if User.objects.filter(username=value).exists():
+            raise ValidationError(
+                f'Имя пользователя {value} уже зарегистрировано.',
+            )
+        return value
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise ValidationError(
+                f'Email {value} уже зарегистрирован.'
+            )
+        return value
 
 
 class TagSerializer(serializers.ModelSerializer):

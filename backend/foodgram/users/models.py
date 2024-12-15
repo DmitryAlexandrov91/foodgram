@@ -17,8 +17,6 @@ class User(AbstractUser):
         'Имя пользователя',
         max_length=MAX_USER_NAME_LENGTH,
         unique=True,
-        blank=True,
-        null=True,
         )
     first_name = models.CharField(
         'Имя',
@@ -36,7 +34,11 @@ class User(AbstractUser):
     )
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = [
+        'username',
+        'first_name',
+        'last_name',
+    ]
 
     class Meta:
 
