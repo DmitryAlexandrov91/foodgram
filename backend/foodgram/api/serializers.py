@@ -5,7 +5,7 @@ import re
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from rest_framework import serializers
+from rest_framework import serializers, status
 
 from recipes.models import (
     Ingredient,
@@ -97,6 +97,12 @@ class CreateUserSerializer(UserCreateSerializer):
                 f'Email {value} уже зарегистрирован.'
             )
         return value
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    """Сериализатор смены пароля пользователя."""
+    current_password = serializers.CharField()
+    new_password = serializers.CharField()
 
 
 class TagSerializer(serializers.ModelSerializer):

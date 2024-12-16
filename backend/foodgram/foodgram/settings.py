@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
     'rest_framework',
+    'django_filters',
     'djoser',
     'users.apps.UsersConfig',
     'recipes.apps.RecipesConfig',
@@ -116,7 +117,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': (
         'rest_framework.pagination.LimitOffsetPagination'),
-    'PAGE_SIZE': PAGINATION_PAGE_SIZE
+    'PAGE_SIZE': PAGINATION_PAGE_SIZE,
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 AUTHENTICATION_BACKENDS = [
@@ -141,7 +143,7 @@ DJOSER = {
             'set_username': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
             'user_create': ['rest_framework.permissions.AllowAny'],
             'user_delete': ['djoser.permissions.CurrentUserOrAdmin'],
-            'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+            'user': ['djoser.permissions.CurrentUserOrAdmin'],
             'user_list': ['rest_framework.permissions.AllowAny'],
             'token_create': ['rest_framework.permissions.AllowAny'],
             'token_destroy': ['rest_framework.permissions.IsAuthenticated'],

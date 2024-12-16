@@ -4,17 +4,19 @@ import hashlib
 import os
 
 from django.db.models import Sum
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse, HttpResponseRedirect
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, filters, status
-from rest_framework.permissions import SAFE_METHODS, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import SAFE_METHODS, IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from djoser.views import UserViewSet
 
-from api.constants import CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT
+from .constants import CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT
+from .filters import IngredientFilter
 from recipes.models import (
     Favorite,
     Ingredient, IngredientInRecipe,
@@ -31,6 +33,7 @@ from .serializers import (
     IngredientSerializer,
     ShoppingCartAndFavoriteSerializer,
     SubscribeSerializer,
+    ResetPasswordSerializer
 )
 
 
@@ -43,6 +46,28 @@ class CustomUserViewSet(UserViewSet):
         if self.action == 'create':
             return CreateUserSerializer
         return ReadUserSerializer
+
+    @action(detail=False, methods=['get'],
+            permission_classes=(IsAuthenticated,))
+    def me(self, request):
+        serializer = ReadUserSerializer(
+            request.user,
+            context={'request': request})
+        return Response(serializer.data)
+
+    @action(
+        detail=False,
+        methods=['post'])
+    def set_password(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        if user.check_password(serializer.data.get('current_password')):
+            user.set_password(serializer.data.get('new_password'))
+            user.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'errors': 'Указан неверный пароль'},
+                        status=status.HTTP_400_BAD_REQUEST)
 
     @action(
         methods=['put', 'delete'],
@@ -274,7 +299,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = []
+    http_method_names = ['get']
+    permission_classes = (AllowAny,)
+    pagination_class = None
+    filter_backends = (DjangoFilterBackend, )
+    filterset_class = IngredientFilter
+    search_fields = ('^name',)
 
 
 class RedirectShortLink(APIView):
