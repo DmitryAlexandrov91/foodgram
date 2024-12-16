@@ -3,17 +3,16 @@ import csv
 import hashlib
 import os
 
-
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse, HttpResponseRedirect
-from djoser.views import UserViewSet
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, filters, status
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
+from djoser.views import UserViewSet
 
 from api.constants import CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT
 from recipes.models import (
@@ -35,9 +34,10 @@ from .serializers import (
 )
 
 
-class UserViewSet(UserViewSet):
+class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     pagination_class = LimitOffsetPagination
+    permission_classes = [IsAuthenticatedOrReadOnly,]
 
     def get_serializer_class(self):
         if self.action == 'create':

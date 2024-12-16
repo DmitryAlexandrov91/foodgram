@@ -8,12 +8,11 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
 from recipes.models import (
-    Favorite, Ingredient,
+    Ingredient,
     IngredientInRecipe, Recipe,
-    ShoppingCart, Tag)
-from users.models import User, Subscribe
+    Tag)
+from users.models import User
 from .constants import USERNAME_PATTERN
-# from .exceptions import UsernameAlreadyExists, EmailAlreadyExists
 
 
 class Base64ImageField(serializers.ImageField):
@@ -62,16 +61,7 @@ class ReadUserSerializer(UserSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        request = self.context.get('request')
-        try:
-            if request.user.is_anonymous:
-                return False
-        except AttributeError:
-            return False
-        return Subscribe.objects.filter(
-            user=request.user,
-            author=obj
-        ).exists()
+        return obj.is_subscribed
 
 
 class CreateUserSerializer(UserCreateSerializer):
@@ -161,18 +151,10 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         exclude = ['pub_date']
 
     def get_is_favorited(self, obj):
-        request = self.context.get('request')
-        if request.user.is_anonymous:
-            return False
-        return Favorite.objects.filter(recipe=obj,
-                                       user=request.user).exists()
+        return obj.is_favorite
 
     def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        return ShoppingCart.objects.filter(recipe=obj,
-                                           user=request.user).exists()
+        return obj.is_in_shopping_cart
 
 
 class CreateIngredientInRecipeSerializer(serializers.ModelSerializer):

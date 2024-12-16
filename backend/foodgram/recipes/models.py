@@ -110,6 +110,14 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def is_in_shopping_cart(self):
+        return self.shopping_cart.filter(user=self.author).exists()
+
+    @property
+    def is_favorited(self):
+        return self.favorite.filter(user=self.author).exists()
+
     def get_full_url(self,):
         return reverse('recipes', kwargs={'pk': self.pk})
 
@@ -126,6 +134,7 @@ class Favorite(models.Model):
         Recipe,
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
+        related_name='favorite'
     )
 
     class Meta:

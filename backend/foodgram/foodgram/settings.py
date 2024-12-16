@@ -124,10 +124,26 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 DJOSER = {
+    'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
         'user_create': 'api.serializers.CreateUserSerializer',
         'user': 'api.serializers.ReadUserSerializer',
         'current_user': 'api.serializers.ReadUserSerializer',
     },
-    'LOGIN_FIELD': 'email',
+    'HIDE_USERS': False,
+    'PERMISSIONS': {
+            'activation': ['rest_framework.permissions.AllowAny'],
+            'password_reset': ['rest_framework.permissions.AllowAny'],
+            'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
+            'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
+            'username_reset': ['rest_framework.permissions.AllowAny'],
+            'username_reset_confirm': ['rest_framework.permissions.AllowAny'],
+            'set_username': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+            'user_create': ['rest_framework.permissions.AllowAny'],
+            'user_delete': ['djoser.permissions.CurrentUserOrAdmin'],
+            'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+            'user_list': ['rest_framework.permissions.AllowAny'],
+            'token_create': ['rest_framework.permissions.AllowAny'],
+            'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
+    },
 }

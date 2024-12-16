@@ -49,6 +49,10 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    @property
+    def is_subscribed(self):
+        return self.follower.filter(author=self).exists()
+
 
 class Subscribe(models.Model):
     """Модель подписки."""
