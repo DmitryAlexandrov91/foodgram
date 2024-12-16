@@ -5,14 +5,14 @@ import re
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from rest_framework import serializers, status
+from rest_framework import serializers
 
 from recipes.models import (
     Ingredient,
     IngredientInRecipe, Recipe,
     Tag)
 from users.models import User
-from .constants import USERNAME_PATTERN
+from .constants import USERNAME_PATTERN, MIN_RECIPE_COOKING_TIME
 
 
 class Base64ImageField(serializers.ImageField):
@@ -157,7 +157,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         exclude = ['pub_date']
 
     def get_is_favorited(self, obj):
-        return obj.is_favorite
+        return obj.is_favorited
 
     def get_is_in_shopping_cart(self, obj):
         return obj.is_in_shopping_cart
@@ -180,7 +180,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
     image = Base64ImageField()
     ingredients = CreateIngredientInRecipeSerializer(
-        many=True
+        many=True,
     )
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
@@ -192,6 +192,26 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         exclude = ['pub_date']
         read_only_fields = ('author',)
+
+    def validate_ingredients(self, value):
+        if not value:
+            raise ValidationError('Рецепт не может быть без ингредиентов!')
+        if any(value.count(item) > 1 for item in value):
+            raise ValidationError('Ингредиенты не должны повторяться!')
+        return value
+
+    def validate_tags(self, value):
+        if not value:
+            raise ValidationError('Необходимо выбрать хотя бы один тег!')
+        if any(value.count(item) > 1 for item in value):
+            raise ValidationError('Теги не должны повторяться!')
+        return value
+
+    # def validated_cooking_time(value):
+    #     if value < MIN_RECIPE_COOKING_TIME:
+    #         raise ValidationError(
+    #             'Время приготовление рецепта не может быть меньше '
+    #             f'{MIN_RECIPE_COOKING_TIME}')
 
     def create_ingredient_in_recipe(self, ingredients, recipe):
         IngredientInRecipe.objects.bulk_create(
@@ -205,21 +225,25 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
         recipe = Recipe.objects.create(**validated_data)
-        recipe.tags.set(tags)
         self.create_ingredient_in_recipe(ingredients, recipe)
+        recipe.tags.set(tags)
         return recipe
 
     def update(self, instance, validated_data):
-        instance.image = validated_data.get('image', instance.image)
+        print(validated_data)
         instance.name = validated_data.get('name', instance.name)
         instance.text = validated_data.get('text', instance.text)
+        instance.image = validated_data.get('image', instance.image)
         instance.cooking_time = validated_data.get(
             'cooking_time',
             instance.cooking_time)
-        instance.ingredients.clear()
+        instance.tag = validated_data.get('tags', instance.tags)
         instance.tags.set(validated_data.get('tags'))
-        ingredients = validated_data.get('ingredients')
-        self.create_ingredient_in_recipe(ingredients, instance)
+
+        self.create_ingredient_in_recipe(
+            validated_data.get('recipe_ingredient'),
+            instance
+        )
         instance.save()
         return instance
 

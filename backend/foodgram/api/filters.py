@@ -1,7 +1,8 @@
 from django_filters import rest_framework as filters
 
 
-from recipes.models import Ingredient
+from recipes.models import Ingredient, Recipe
+from users.models import User
 
 
 class IngredientFilter(filters.FilterSet):
@@ -14,3 +15,19 @@ class IngredientFilter(filters.FilterSet):
     class Meta:
         model = Ingredient
         fields = ('name', )
+
+
+class RecipeFilter(filters.FilterSet):
+    """Фильтрация для эндпоинта recipes."""
+
+    author = filters.ModelChoiceFilter(
+        queryset=User.objects.all()
+    )
+    tags = filters.AllValuesMultipleFilter(
+        field_name='tags__slug',
+        label='Ссылка'
+    )
+
+    class Meta:
+        model = Recipe
+        fields = ['author', 'tags']
