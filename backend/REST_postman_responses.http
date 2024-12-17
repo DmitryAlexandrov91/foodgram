@@ -1,0 +1,42 @@
+POST http://127.0.0.1:8000/api/users/set_password/
+Content-Type: application/json
+Authorization: Token 562a1f13b1f43f4bb65654a139894e5ae476088f
+
+{
+    "current_password": "MySecretPas$word",
+    "new_password": "thi$Pa$$w0rdW@sCh@nged"
+}
+
+###
+GET http://127.0.0.1:8000/api/users/me/
+# Authorization: Token 1c9f6142fcd8d84cfd2b865cee88d20d626cd74c
+
+
+###
+GET http://127.0.0.1:8000/api/ingredients/?name=мяс
+
+###
+PATCH http://127.0.0.1:8000/api/recipes/66/
+Authorization: Token ff77a18ec4da08dc24ca8fcbec6279416633d0c2
+Content-Type: application/json
+
+{
+    "ingredients": [
+        {
+            "id": 1,
+            "amount": 25
+        }
+    ],
+    "tags": [
+        2
+    ],
+    "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+    "name": "Нечто съедобное (пробовать на свой страх и риск)",
+    "text": "Приготовьте как нибудь эти ингредиеты, не забудьте посолить.",
+    "cooking_time": 12
+}
+
+
+###
+GET http://127.0.0.1:8000/api/recipes/56/
+
