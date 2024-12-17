@@ -12,8 +12,7 @@ from recipes.models import (
     IngredientInRecipe, Recipe,
     Tag)
 from users.models import User
-from .constants import USERNAME_PATTERN, MIN_RECIPE_COOKING_TIME
-import api.validators as ApiValidators
+from foodgram.constants import USERNAME_PATTERN, MIN_RECIPE_COOKING_TIME
 
 
 class Base64ImageField(serializers.ImageField):
@@ -182,7 +181,6 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     ingredients = CreateIngredientInRecipeSerializer(
         many=True,
-        # validators=(ApiValidators.validate_ingredients,)
     )
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
@@ -200,10 +198,10 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         if request and request.method == 'PATCH':
             if 'tags' not in data:
                 raise serializers.ValidationError(
-                    {'Поле tags обязательно.'})
+                    'В запросе нет поля tags!')
             if "ingredients" not in data:
                 raise serializers.ValidationError(
-                    {'Поле ingredients обязательно.'})
+                    'В запросе нет поля ingredients!')
         return data
 
     def validate_ingredients(self, value):
@@ -299,9 +297,19 @@ class SubscribeSerializer(ReadUserSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get('request')
-        recipes = Recipe.objects.filter(
-            author=obj
-        )
+        recipes_limit = request.query_params.get('recipes_limit')
+        if recipes_limit:
+            try:
+                limit = int(recipes_limit)
+                recipes = Recipe.objects.filter(
+                    author=obj)[:limit]
+            except ValueError:
+                recipes = Recipe.objects.filter(
+                    author=obj)
+        else:
+            recipes = Recipe.objects.filter(
+                author=obj
+            )
         context = {'request': request}
         return ShoppingCartAndFavoriteSerializer(
             recipes, many=True,

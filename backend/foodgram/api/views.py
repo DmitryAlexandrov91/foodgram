@@ -18,7 +18,8 @@ from rest_framework.permissions import (
 from rest_framework.views import APIView
 from djoser.views import UserViewSet
 
-from .constants import CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT
+from foodgram.constants import (
+    CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT)
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAuthorOrReadOnly
 from recipes.models import (
@@ -141,7 +142,7 @@ class CustomUserViewSet(UserViewSet):
             return Response(
                 {"errors": "Вы не подписаны на этого пользователя."},
                 status=status.HTTP_400_BAD_REQUEST)
-
+  
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()

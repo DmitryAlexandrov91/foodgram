@@ -2,7 +2,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from api.constants import MAX_USER_EMAIL_LENGTH, MAX_USER_NAME_LENGTH
+from foodgram.constants import MAX_USER_EMAIL_LENGTH, MAX_USER_NAME_LENGTH
 
 
 class User(AbstractUser):

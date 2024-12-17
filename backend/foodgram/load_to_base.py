@@ -9,7 +9,6 @@ cur = con.cursor()
 
 ingredients = 'C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\Final_projects_for_review\\foodgram\\data\\ingredients.csv'
 tags = 'C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\Final_projects_for_review\\foodgram\\data\\tags.csv'
-users = 'C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\Final_projects_for_review\\foodgram\\data\\users.csv'
 
 with open(ingredients, encoding='utf-8') as file:
     data = csv.DictReader(file)

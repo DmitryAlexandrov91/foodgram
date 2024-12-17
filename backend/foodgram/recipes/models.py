@@ -4,7 +4,7 @@ from django.db import models
 from django.urls import reverse
 
 
-from api.constants import (
+from foodgram.constants import (
     MIN_RECIPE_COOKING_TIME,
     MIN_RECIPE_INGREDIENT_QUANITY,
     MAX_RECIPE_NAME_LENGHT,

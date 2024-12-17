@@ -1,10 +1,8 @@
 """Константы проекта foodgram."""
 import os
+from pathlib import Path
 
-from django.conf import settings
 
-
-CSV_FOLDER_PATH = os.path.join(settings.BASE_DIR, 'media\\shopping_carts')
 MIN_RECIPE_COOKING_TIME = 1
 MIN_RECIPE_INGREDIENT_QUANITY = 1
 MAX_RECIPE_NAME_LENGHT = 256
@@ -15,3 +13,6 @@ MAX_INGREDIENT_MEASUREMENT_UNIT_LENGHT = 64
 MAX_TAG_NAME_LENGHT = 32
 MAX_RECIPELINKS_SHORTLINK_LENGHT = 5
 USERNAME_PATTERN = r'^[\w.@+-]+\Z'
+PAGINATION_PAGE_SIZE = 10
+BASE_DIR = Path(__file__).resolve().parent.parent
+CSV_FOLDER_PATH = os.path.join(BASE_DIR, 'media\\shopping_carts')

@@ -1,17 +1,13 @@
 import os
-from pathlib import Path
 
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 from .utils import debug_bool_check, get_allowed_hosts
-
+from .constants import PAGINATION_PAGE_SIZE, BASE_DIR
 
 load_dotenv()
 
-PAGINATION_PAGE_SIZE = 10
-
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
@@ -118,7 +114,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': (
         'rest_framework.pagination.LimitOffsetPagination'),
     'PAGE_SIZE': PAGINATION_PAGE_SIZE,
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend']
 }
 
 AUTHENTICATION_BACKENDS = [

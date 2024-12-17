@@ -17,7 +17,7 @@ GET http://127.0.0.1:8000/api/ingredients/?name=мяс
 
 ###
 PATCH http://127.0.0.1:8000/api/recipes/1/
-Authorization: Token 055539171ebf6a96cd74e3572fec0be3cde242c9
+Authorization: Token 47c46ae279bd367557a30507c1c2033d1aeff8c1
 Content-Type: application/json
 
 {
@@ -37,3 +37,17 @@ GET http://127.0.0.1:8000/api/recipes/
 
 
 
+
+###
+POST http://127.0.0.1:8000/api/users/2/subscribe/?recipes_limit=2
+Authorization: Token 6fb2414224d21768ea872ca484e75a2edf09ea8f
+Content-Type: application/json
+
+###
+DELETE http://127.0.0.1:8000/api/users/2/subscribe/
+Authorization: Token 6fb2414224d21768ea872ca484e75a2edf09ea8f
+Content-Type: application/json
+###
+GET http://127.0.0.1:8000/api/users/subscriptions/?recipes_limit=4
+Authorization: Token 6fb2414224d21768ea872ca484e75a2edf09ea8f
+Content-Type: application/json
