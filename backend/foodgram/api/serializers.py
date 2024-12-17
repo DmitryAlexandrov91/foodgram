@@ -13,6 +13,7 @@ from recipes.models import (
     Tag)
 from users.models import User
 from .constants import USERNAME_PATTERN, MIN_RECIPE_COOKING_TIME
+import api.validators as ApiValidators
 
 
 class Base64ImageField(serializers.ImageField):
@@ -181,6 +182,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     ingredients = CreateIngredientInRecipeSerializer(
         many=True,
+        # validators=(ApiValidators.validate_ingredients,)
     )
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
@@ -192,6 +194,17 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         exclude = ['pub_date']
         read_only_fields = ('author',)
+
+    def validate(self, data):
+        request = self.context.get('request')
+        if request and request.method == 'PATCH':
+            if 'tags' not in data:
+                raise serializers.ValidationError(
+                    {'Поле tags обязательно.'})
+            if "ingredients" not in data:
+                raise serializers.ValidationError(
+                    {'Поле ingredients обязательно.'})
+        return data
 
     def validate_ingredients(self, value):
         if not value:
@@ -207,11 +220,12 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             raise ValidationError('Теги не должны повторяться!')
         return value
 
-    # def validated_cooking_time(value):
-    #     if value < MIN_RECIPE_COOKING_TIME:
-    #         raise ValidationError(
-    #             'Время приготовление рецепта не может быть меньше '
-    #             f'{MIN_RECIPE_COOKING_TIME}')
+    def validate_cooking_time(self, value):
+        if value < MIN_RECIPE_COOKING_TIME:
+            raise ValidationError(
+                'Время приготовление рецепта не может быть меньше '
+                f'{MIN_RECIPE_COOKING_TIME}')
+        return value
 
     def create_ingredient_in_recipe(self, ingredients, recipe):
         IngredientInRecipe.objects.bulk_create(
@@ -230,20 +244,21 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        print(validated_data)
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.text)
+        recipe = instance
         instance.image = validated_data.get('image', instance.image)
+        instance.name = validated_data.get('name', instance.name)
+        instance.text = validated_data.get('text', instance.name)
         instance.cooking_time = validated_data.get(
             'cooking_time',
-            instance.cooking_time)
-        instance.tag = validated_data.get('tags', instance.tags)
-        instance.tags.set(validated_data.get('tags'))
-
-        self.create_ingredient_in_recipe(
-            validated_data.get('recipe_ingredient'),
-            instance
+            instance.cooking_time
         )
+        instance.tags.clear()
+        instance.ingredients.clear()
+        tags = validated_data.get('tags')
+        instance.tags.set(tags)
+        ingredients = validated_data.get('ingredients')
+        IngredientInRecipe.objects.filter(recipe=recipe).delete()
+        self.create_ingredient_in_recipe(ingredients, recipe)
         instance.save()
         return instance
 

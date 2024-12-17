@@ -8,7 +8,7 @@ Authorization: Token 562a1f13b1f43f4bb65654a139894e5ae476088f
 }
 
 ###
-GET http://127.0.0.1:8000/api/users/me/
+GET http://127.0.0.1:8000/api/users
 # Authorization: Token 1c9f6142fcd8d84cfd2b865cee88d20d626cd74c
 
 
@@ -16,27 +16,24 @@ GET http://127.0.0.1:8000/api/users/me/
 GET http://127.0.0.1:8000/api/ingredients/?name=мяс
 
 ###
-PATCH http://127.0.0.1:8000/api/recipes/66/
-Authorization: Token ff77a18ec4da08dc24ca8fcbec6279416633d0c2
+PATCH http://127.0.0.1:8000/api/recipes/1/
+Authorization: Token 055539171ebf6a96cd74e3572fec0be3cde242c9
 Content-Type: application/json
 
 {
-    "ingredients": [
-        {
-            "id": 1,
-            "amount": 25
-        }
-    ],
+    "ingredients": [],
     "tags": [
         2
     ],
     "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
-    "name": "Нечто съедобное (пробовать на свой страх и риск)",
+    "name": "Тест изменения рецепта",
     "text": "Приготовьте как нибудь эти ингредиеты, не забудьте посолить.",
     "cooking_time": 12
 }
 
 
 ###
-GET http://127.0.0.1:8000/api/recipes/56/
+GET http://127.0.0.1:8000/api/recipes/
+
+
 

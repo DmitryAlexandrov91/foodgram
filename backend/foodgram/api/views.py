@@ -11,13 +11,16 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, status
-from rest_framework.permissions import SAFE_METHODS, IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
+from rest_framework.permissions import (
+    SAFE_METHODS,
+    IsAuthenticatedOrReadOnly,
+    IsAuthenticated, AllowAny)
 from rest_framework.views import APIView
 from djoser.views import UserViewSet
 
 from .constants import CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT
 from .filters import IngredientFilter, RecipeFilter
-from .permissions import AutenticatedReadOnly
+from .permissions import IsAuthorOrReadOnly
 from recipes.models import (
     Favorite,
     Ingredient, IngredientInRecipe,
@@ -149,7 +152,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly,]
+    permission_classes = [IsAuthorOrReadOnly,]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
