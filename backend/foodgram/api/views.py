@@ -17,6 +17,7 @@ from djoser.views import UserViewSet
 
 from .constants import CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT
 from .filters import IngredientFilter, RecipeFilter
+from .permissions import AutenticatedReadOnly
 from recipes.models import (
     Favorite,
     Ingredient, IngredientInRecipe,
@@ -47,8 +48,10 @@ class CustomUserViewSet(UserViewSet):
             return CreateUserSerializer
         return ReadUserSerializer
 
-    @action(detail=False, methods=['get'],
-            permission_classes=(IsAuthenticated,))
+    @action(
+        detail=False,
+        permission_classes=(IsAuthenticated,)
+    )
     def me(self, request):
         serializer = ReadUserSerializer(
             request.user,
