@@ -39,9 +39,6 @@ class RecipeFilter(rest_framework.FilterSet):
     )
 
     def get_is_in(self, queryset, name, value):
-
-        print(name)
-        print(value)
         user = self.request.user
         if user.is_authenticated:
             if value == '1':
