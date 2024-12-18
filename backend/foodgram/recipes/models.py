@@ -112,11 +112,11 @@ class Recipe(models.Model):
 
     @property
     def is_in_shopping_cart(self):
-        return self.shopping_cart.filter(user=self.author).exists()
+        return self.shopping_cart.filter(author=self.request.user).exists()
 
-    @property
-    def is_favorited(self):
-        return self.favorite.filter(user=self.author).exists()
+    # @property
+    # def is_favorited(self):
+    #     return self.favorite.filter(user=self.author).exists()
 
     def get_full_url(self,):
         return reverse('recipes', kwargs={'pk': self.pk})

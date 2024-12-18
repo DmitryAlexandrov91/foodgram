@@ -51,3 +51,18 @@ Content-Type: application/json
 GET http://127.0.0.1:8000/api/users/subscriptions/?recipes_limit=4
 Authorization: Token 6fb2414224d21768ea872ca484e75a2edf09ea8f
 Content-Type: application/json
+
+###
+GET http://127.0.0.1:8000/api/recipes/?is_in_shopping_cart=1
+Authorization: Token 930948dfa4a35f5f862a7391ea928669cc09dbc9
+
+
+
+###
+GET http://127.0.0.1:8000/api/recipes/1/
+Authorization: Token 930948dfa4a35f5f862a7391ea928669cc09dbc9
+
+
+###
+DELETE http://127.0.0.1:8000/api/recipes/1/shopping_cart/
+Authorization: Token bd507ef41133c8913424548815c1a841b038b195

@@ -16,3 +16,7 @@ USERNAME_PATTERN = r'^[\w.@+-]+\Z'
 PAGINATION_PAGE_SIZE = 10
 BASE_DIR = Path(__file__).resolve().parent.parent
 CSV_FOLDER_PATH = os.path.join(BASE_DIR, 'media\\shopping_carts')
+RECIPE_STATUS_CHOICES = (
+    (0, 'Not_In_List'),
+    (1, 'In_List'),
+)

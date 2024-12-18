@@ -10,7 +10,9 @@ from rest_framework import serializers
 from recipes.models import (
     Ingredient,
     IngredientInRecipe, Recipe,
-    Tag)
+    Tag,
+    ShoppingCart,
+    Favorite)
 from users.models import User
 from foodgram.constants import USERNAME_PATTERN, MIN_RECIPE_COOKING_TIME
 
@@ -157,10 +159,18 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         exclude = ['pub_date']
 
     def get_is_favorited(self, obj):
-        return obj.is_favorited
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        return Favorite.objects.filter(recipe=obj,
+                                       user=request.user).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        return obj.is_in_shopping_cart
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        return ShoppingCart.objects.filter(recipe=obj,
+                                           user=request.user).exists()
 
 
 class CreateIngredientInRecipeSerializer(serializers.ModelSerializer):

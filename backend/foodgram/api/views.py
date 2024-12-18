@@ -142,7 +142,7 @@ class CustomUserViewSet(UserViewSet):
             return Response(
                 {"errors": "Вы не подписаны на этого пользователя."},
                 status=status.HTTP_400_BAD_REQUEST)
-  
+
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
@@ -153,7 +153,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = [IsAuthorOrReadOnly,]
+    permission_classes = [IsAuthorOrReadOnly]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
@@ -264,12 +264,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 modified_data,
                 status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
-            recipe_in_shopping_cart = get_object_or_404(
-                ShoppingCart,
-                user=request.user,
-                recipe=recipe)
-            recipe_in_shopping_cart.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            recipe_in_shopping_cart = ShoppingCart.objects.filter(
+                user=request.user, recipe=recipe)
+            if recipe_in_shopping_cart:
+                recipe_in_shopping_cart.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @action(
         detail=True,
