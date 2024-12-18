@@ -22,7 +22,6 @@ Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 ###
 GET http://127.0.0.1:8000/api/users/
-Authorization: Token 7be9bfe1e6595a8f4a1a8847c9c85fe06e4d9ea7
 
 
 ###
@@ -115,7 +114,11 @@ Authorization: Token 2c426106c172db713819cc88267c8e6a85958229
 
 # Токен юзера Test_user - 7f93d8845df820ddedd01223c14f3f0412ad7150
 ###
-GET http://127.0.0.1:8000/api/users/subscriptions
+GET http://127.0.0.1:8000/api/users/subscriptions/
+Authorization: Token 7f93d8845df820ddedd01223c14f3f0412ad7150
+
+###
+GET http://127.0.0.1:8000/api/users/1/
 Authorization: Token 7f93d8845df820ddedd01223c14f3f0412ad7150
 
 

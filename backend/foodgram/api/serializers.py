@@ -13,12 +13,12 @@ from recipes.models import (
     Tag,
     ShoppingCart,
     Favorite)
-from users.models import User
+from users.models import User, Subscribe
 from foodgram.constants import USERNAME_PATTERN, MIN_RECIPE_COOKING_TIME
 
 
 class Base64ImageField(serializers.ImageField):
-    """Изображения."""
+    """Сериализатор изображения."""
 
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
@@ -30,6 +30,8 @@ class Base64ImageField(serializers.ImageField):
 
 
 class AvatarSerializer(serializers.ModelSerializer):
+    """Сериализатор для аватара пользователя."""
+
     avatar = Base64ImageField()
 
     class Meta:
@@ -63,7 +65,12 @@ class ReadUserSerializer(UserSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        return obj.is_subscribed
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        return Subscribe.objects.filter(
+            user=request.user,
+            author=obj).exists()
 
 
 class CreateUserSerializer(UserCreateSerializer):
@@ -277,6 +284,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartAndFavoriteSerializer(serializers.ModelSerializer):
+    """Сериализатор для избранного и корзины покупок."""
+
     image = Base64ImageField(read_only=True)
     name = serializers.ReadOnlyField()
     cooking_time = serializers.ReadOnlyField()
@@ -287,6 +296,7 @@ class ShoppingCartAndFavoriteSerializer(serializers.ModelSerializer):
 
 
 class SubscribeSerializer(ReadUserSerializer):
+    """Сериализатор для подписок."""
 
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()

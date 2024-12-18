@@ -43,6 +43,8 @@ from .serializers import (
 
 
 class CustomUserViewSet(UserViewSet):
+    """Представление эндпоинта user."""
+
     queryset = User.objects.all()
     pagination_class = LimitOffsetPagination
     permission_classes = [IsAuthenticatedOrReadOnly,]
@@ -145,6 +147,7 @@ class CustomUserViewSet(UserViewSet):
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    """Представление для эндпоинта tags."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = []
@@ -152,6 +155,8 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    """Представление для эндпоинта recipes."""
+
     queryset = Recipe.objects.all()
     permission_classes = [IsAuthorOrReadOnly]
     filter_backends = (DjangoFilterBackend,)
@@ -304,6 +309,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    """Представление для эндпоинта ingredients."""
+
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     http_method_names = ['get']
@@ -315,6 +322,8 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RedirectShortLink(APIView):
+    """Представление для редиректа ссылок."""
+
     permission_classes = []
 
     def get(self, request, hash_link):

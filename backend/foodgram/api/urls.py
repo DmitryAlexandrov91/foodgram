@@ -8,13 +8,10 @@ from api.views import (
     RecipeViewSet,
     TagViewSet)
 
-
-app_name = 'api'
-
 router = DefaultRouter()
 router.register(r'users', CustomUserViewSet)
 router.register(r'tags', TagViewSet)
-router.register(r'recipes', RecipeViewSet, basename='recipe')
+router.register(r'recipes', RecipeViewSet)
 router.register(r'ingredients', IngredientViewSet)
 
 urlpatterns = [
