@@ -93,7 +93,7 @@ class CreateUserSerializer(UserCreateSerializer):
             USERNAME_PATTERN,
             value))
         if not is_mutch:
-            raise ValidationError(f'Нельзя использовать имя {value}!')
+            raise ValidationError(f'Имя пользователя {value} недопустимо!')
         if User.objects.filter(username=value).exists():
             raise ValidationError(
                 f'Имя пользователя {value} уже зарегистрировано.',
