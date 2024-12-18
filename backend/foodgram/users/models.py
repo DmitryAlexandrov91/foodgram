@@ -17,7 +17,7 @@ class User(AbstractUser):
         'Имя пользователя',
         max_length=MAX_USER_NAME_LENGTH,
         unique=True,
-        )
+    )
     first_name = models.CharField(
         'Имя',
         max_length=MAX_USER_NAME_LENGTH

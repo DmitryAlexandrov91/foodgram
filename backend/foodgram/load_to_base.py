@@ -7,15 +7,18 @@ con = sqlite3.connect("db.sqlite3")
 
 cur = con.cursor()
 
-ingredients = 'C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\Final_projects_for_review\\foodgram\\data\\ingredients.csv'
-tags = 'C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\Final_projects_for_review\\foodgram\\data\\tags.csv'
+ingredients = ('C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\'
+               'Final_projects_for_review\\foodgram\\data\\ingredients.csv')
+tags = ('C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\'
+        'Final_projects_for_review\\foodgram\\data\\tags.csv')
 
 with open(ingredients, encoding='utf-8') as file:
     data = csv.DictReader(file)
     to_base = [(i['name'], i['measurement_unit']) for i in data]
     for i in to_base:
         cur.executemany(
-            "INSERT INTO recipes_ingredient (name, measurement_unit) VALUES (?, ?);",
+            "INSERT INTO recipes_ingredient"
+            "(name, measurement_unit) VALUES (?, ?);",
             [i]
         )
 

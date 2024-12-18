@@ -50,7 +50,7 @@ class Tag(models.Model):
         validators=[validators.RegexValidator(
             regex='^[-a-zA-Z0-9_]+$',
             message='Недопустимый слаг.')]
-            )
+    )
 
     class Meta:
         verbose_name = 'Тег'
@@ -207,7 +207,7 @@ class RecipeLinks(models.Model):
     short_link = models.CharField(
         'Короткая ссылка',
         max_length=MAX_RECIPELINKS_SHORTLINK_LENGHT
-        )
+    )
 
     class Meta:
         verbose_name = 'ссылки'

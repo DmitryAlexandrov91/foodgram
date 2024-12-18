@@ -92,6 +92,7 @@ class ShoppingCartAdmin(admin.ModelAdmin):
     list_filter = ('user',)
     list_display_links = ('user',)
 
+
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     """Настройка админки модели Favorite."""

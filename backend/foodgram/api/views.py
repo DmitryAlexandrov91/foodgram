@@ -20,13 +20,13 @@ from djoser.views import UserViewSet
 
 from foodgram.constants import (
     CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT)
-from .filters import IngredientFilter, RecipeFilter
-from .permissions import IsAuthorOrReadOnly
 from recipes.models import (
     Favorite,
     Ingredient, IngredientInRecipe,
     Recipe, RecipeLinks,
     ShoppingCart, Tag)
+from .filters import IngredientFilter, RecipeFilter
+from .permissions import IsAuthorOrReadOnly
 from users.models import User, Subscribe
 from .serializers import (
     ReadUserSerializer,
@@ -253,13 +253,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             if ShoppingCart.objects.filter(
                 user=request.user, recipe=recipe
-                    ).exists():
+            ).exists():
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             ShoppingCart.objects.create(user=request.user, recipe=recipe)
             modified_data = {
                 **serializer.data,
                 'image': request.build_absolute_uri(
-                            recipe.image.url)}
+                    recipe.image.url)}
             return Response(
                 modified_data,
                 status=status.HTTP_201_CREATED)
@@ -294,7 +294,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             modified_data = {
                 **serializer.data,
                 'image': request.build_absolute_uri(
-                            recipe.image.url)}
+                    recipe.image.url)}
             return Response(modified_data, status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
             if favorite.exists():
