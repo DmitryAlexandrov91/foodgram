@@ -13,7 +13,7 @@ services:
       - fg_data:/var/lib/postgresql/data
   backend:
     build:
-      context: ./backend
+      context: ./backend/foodgram
       dockerfile: Dockerfile
     restart: always   
     env_file: .env
