@@ -166,20 +166,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action in SAFE_METHODS:
             return ReadRecipeSerializer
         return CreateRecipeSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
-    def destroy(self, request, pk=None):
-        recipe = Recipe.objects.filter(pk=pk)
-        recipe.delete()
-        return Response(
-            {'detail': 'Рецепт успешно удалён'},
-            status=status.HTTP_204_NO_CONTENT
-        )
-
+    
     def short_link_create(self, pk):
-        original_link = self.reverse_action('detail', args=[pk])
+        original_link = (self.reverse_action('detail', args=[pk]))
         separator = original_link.find('api/')
         start_link = original_link[:separator]
         short_link = hashlib.md5(
@@ -195,6 +184,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 short_link=result_link
             )
         return result_link
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    def destroy(self, request, pk=None):
+        recipe = Recipe.objects.filter(pk=pk)
+        recipe.delete()
+        return Response(
+            {'detail': 'Рецепт успешно удалён'},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
     @action(
         detail=True,

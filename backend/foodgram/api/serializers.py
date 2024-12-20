@@ -14,7 +14,9 @@ from recipes.models import (
     ShoppingCart,
     Favorite)
 from users.models import User, Subscribe
-from foodgram.constants import USERNAME_PATTERN, MIN_RECIPE_COOKING_TIME
+from foodgram.constants import (
+    USERNAME_PATTERN,
+    MIN_RECIPE_COOKING_TIME)
 
 
 class Base64ImageField(serializers.ImageField):
