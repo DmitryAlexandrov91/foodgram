@@ -10,4 +10,14 @@ RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . .
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "foodgram.wsgi"]
+# COPY ./entrypoint.sh /
+
+# RUN chmod +x /entrypoint.sh
+
+# EXPOSE 8000
+
+# ENV PYTHONUNBUFFERED=1
+
+# ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["gunicorn", "--bind", "0.0.0.0:9090", "foodgram.wsgi"]
