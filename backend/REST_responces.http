@@ -129,3 +129,6 @@ Authorization: Token 7f93d8845df820ddedd01223c14f3f0412ad7150
 ###
 POST http://127.0.0.1:8000/api/users/1/subscribe/
 Authorization: Token 7f93d8845df820ddedd01223c14f3f0412ad7150
+
+###
+GET http://127.0.0.1:9090/api/users
