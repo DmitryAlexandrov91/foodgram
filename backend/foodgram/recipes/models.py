@@ -1,8 +1,9 @@
 """Модели приложения recipes."""
 from django.core import validators
 from django.db import models
+from django.dispatch import receiver
 from django.urls import reverse
-
+import shortuuid
 
 from foodgram.constants import (
     MIN_RECIPE_COOKING_TIME,
@@ -110,17 +111,6 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
-    @property
-    def is_in_shopping_cart(self):
-        return self.shopping_cart.filter(author=self.request.user).exists()
-
-    # @property
-    # def is_favorited(self):
-    #     return self.favorite.filter(user=self.author).exists()
-
-    def get_full_url(self,):
-        return reverse('recipes', kwargs={'pk': self.pk})
-
 
 class Favorite(models.Model):
     """Модель избранного."""
@@ -203,10 +193,15 @@ class IngredientInRecipe(models.Model):
 class RecipeLinks(models.Model):
     """Модель для хранения ссылок."""
 
-    original_link = models.URLField('Оригинальная ссылка')
     short_link = models.CharField(
         'Короткая ссылка',
-        max_length=MAX_RECIPELINKS_SHORTLINK_LENGHT
+        max_length=MAX_RECIPELINKS_SHORTLINK_LENGHT,
+        unique=True
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name='рецепт',
     )
 
     class Meta:
@@ -215,3 +210,12 @@ class RecipeLinks(models.Model):
 
     def __str__(self):
         return self.short_link
+
+    @receiver(models.signals.post_save, sender=Recipe)
+    def get_short_link(sender, instance, created, **kwargs):
+        if created:
+            RecipeLinks.objects.create(
+                short_link=shortuuid.ShortUUID().random(
+                    length=MAX_RECIPELINKS_SHORTLINK_LENGHT),
+                recipe_id=instance.id
+            )

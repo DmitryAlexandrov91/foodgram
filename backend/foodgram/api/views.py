@@ -1,12 +1,11 @@
 """Представления api проекта foodgram."""
 import csv
-import hashlib
 import os
 
 from django.db.models import Sum
 from django_filters.rest_framework import DjangoFilterBackend
-from django.shortcuts import get_object_or_404
-from django.http import FileResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
+from django.http import FileResponse, JsonResponse
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -18,8 +17,7 @@ from rest_framework.permissions import (
 from rest_framework.views import APIView
 from djoser.views import UserViewSet
 
-from foodgram.constants import (
-    CSV_FOLDER_PATH, MAX_RECIPELINKS_SHORTLINK_LENGHT)
+from foodgram.constants import CSV_FOLDER_PATH
 from recipes.models import (
     Favorite,
     Ingredient, IngredientInRecipe,
@@ -166,24 +164,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action in SAFE_METHODS:
             return ReadRecipeSerializer
         return CreateRecipeSerializer
-    
-    def short_link_create(self, pk):
-        original_link = (self.reverse_action('detail', args=[pk]))
-        separator = original_link.find('api/')
-        start_link = original_link[:separator]
-        short_link = hashlib.md5(
-            original_link.encode()).hexdigest()[
-                :MAX_RECIPELINKS_SHORTLINK_LENGHT]
-        result_link = start_link + short_link
-        if not RecipeLinks.objects.filter(
-            original_link=original_link,
-            short_link=result_link
-        ).exists():
-            RecipeLinks.objects.create(
-                original_link=original_link,
-                short_link=result_link
-            )
-        return result_link
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -202,11 +182,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[],
     )
     def get_link(self, request, pk=None):
-        recipe = Recipe.objects.filter(pk=pk)
-        if recipe.exists():
-            return Response(
-                {'short-link': self.short_link_create(pk)})
-        return Response(
+        links = RecipeLinks.get(recipe_id=pk)
+        if links:
+            return JsonResponse(
+                {'short-link': request.build_absolute_uri(
+                    f'/s/{links.short_link}')})
+        return JsonResponse(
             {"detail": f"Рецепт с ID {pk} не найден."},
             status=status.HTTP_404_NOT_FOUND
         )
@@ -326,11 +307,11 @@ class RedirectShortLink(APIView):
 
     permission_classes = []
 
-    def get(self, request, hash_link):
-        link = request.build_absolute_uri(hash_link)
-        short_link = RecipeLinks.objects.get(short_link=link)
-        if short_link:
-            return HttpResponseRedirect(short_link.original_link)
-        return Response(
-            {"error": "Короткая ссылка не найдена"},
-            status=status.HTTP_404_NOT_FOUND)
+    def get(self, request, short_link):
+        link = get_object_or_404(
+            RecipeLinks,
+            short_link=short_link
+        )
+        return redirect(
+            request.build_absolute_uri(
+                f'/recipes/{link.recipe_id}/'))

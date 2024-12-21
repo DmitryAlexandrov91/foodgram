@@ -105,6 +105,5 @@ class FavoriteAdmin(admin.ModelAdmin):
 class RecipeLinksAdmin(admin.ModelAdmin):
     """Настройка админки модели RecipeLinks."""
 
-    list_display = ('id', 'original_link', 'short_link')
-    list_filter = ('original_link',)
-    list_display_links = ('original_link',)
+    list_display = ('id', 'short_link')
+    list_display_links = ('short_link',)

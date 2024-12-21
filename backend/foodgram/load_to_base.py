@@ -7,10 +7,13 @@ con = sqlite3.connect("db.sqlite3")
 
 cur = con.cursor()
 
-ingredients = ('C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\'
-               'Final_projects_for_review\\foodgram\\data\\ingredients.csv')
-tags = ('C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\'
-        'Final_projects_for_review\\foodgram\\data\\tags.csv')
+ingredients = (
+    'C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\'
+    'Final_projects_for_review\\foodgram\\backend\\foodgram\\data\\'
+    'ingredient.csv')
+tags = (
+    'C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\'
+    'Final_projects_for_review\\foodgram\\backend\\foodgram\\data\\tag.csv')
 
 with open(ingredients, encoding='utf-8') as file:
     data = csv.DictReader(file)
