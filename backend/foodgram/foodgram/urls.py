@@ -9,7 +9,7 @@ from api.views import RedirectShortLink
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-    path('s/<str:short_link>/', RedirectShortLink.as_view())
+    path('s/<str:short_link>', RedirectShortLink.as_view())
 ]
 
 if settings.DEBUG:
