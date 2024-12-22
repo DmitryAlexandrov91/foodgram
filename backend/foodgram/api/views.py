@@ -6,7 +6,7 @@ from django.db.models import Sum
 from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404, redirect
-from django.http import FileResponse, HttpResponseRedirect, JsonResponse
+from django.http import FileResponse, JsonResponse
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -15,7 +15,6 @@ from rest_framework.permissions import (
     SAFE_METHODS,
     IsAuthenticatedOrReadOnly,
     IsAuthenticated, AllowAny)
-from rest_framework.views import APIView
 from djoser.views import UserViewSet
 
 from foodgram.constants import CSV_FOLDER_PATH

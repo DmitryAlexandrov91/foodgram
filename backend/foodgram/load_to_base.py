@@ -1,4 +1,4 @@
-"""Скрипт записи ингредиентов в базу данных."""
+"""Скрипт для быстрой записи ингредиентов и тегов в базу данных sqlite3."""
 import csv
 import sqlite3
 
@@ -7,13 +7,8 @@ con = sqlite3.connect("db.sqlite3")
 
 cur = con.cursor()
 
-ingredients = (
-    'C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\'
-    'Final_projects_for_review\\foodgram\\backend\\foodgram\\data\\'
-    'ingredient.csv')
-tags = (
-    'C:\\Users\\AlDmAl\\Desktop\\Python\\VSC\\Dev\\'
-    'Final_projects_for_review\\foodgram\\backend\\foodgram\\data\\tag.csv')
+ingredients = ('data\\ingredient.csv')
+tags = ('data\\tag.csv')
 
 with open(ingredients, encoding='utf-8') as file:
     data = csv.DictReader(file)
