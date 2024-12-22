@@ -2,7 +2,6 @@
 from django.core import validators
 from django.db import models
 from django.dispatch import receiver
-from django.urls import reverse
 import shortuuid
 
 from foodgram.constants import (

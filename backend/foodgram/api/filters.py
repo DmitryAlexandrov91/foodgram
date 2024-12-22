@@ -1,3 +1,4 @@
+"""Кастомные фильтры приложения api."""
 from django_filters import rest_framework
 
 from recipes.models import Ingredient, Recipe
@@ -39,6 +40,7 @@ class RecipeFilter(rest_framework.FilterSet):
     )
 
     def get_is_in(self, queryset, name, value):
+        """Фильтрация кверисета в зависимости от параметров запроса."""
         user = self.request.user
         if user.is_authenticated:
             if value == '1':

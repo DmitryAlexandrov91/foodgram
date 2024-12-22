@@ -41,7 +41,7 @@ from .serializers import (
 
 
 class CustomUserViewSet(UserViewSet):
-    """Представление эндпоинта user."""
+    """Представление эндпоинта users."""
 
     queryset = User.objects.all()
     pagination_class = LimitOffsetPagination

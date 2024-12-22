@@ -318,6 +318,7 @@ class SubscribeSerializer(ReadUserSerializer):
         )
 
     def get_recipes(self, obj):
+        """Ограничивает выдачу рецептов по параметру recipes_limit."""
         request = self.context.get('request')
         recipes_limit = request.query_params.get('recipes_limit')
         if recipes_limit:
@@ -334,8 +335,10 @@ class SubscribeSerializer(ReadUserSerializer):
             )
         context = {'request': request}
         return ShoppingCartAndFavoriteSerializer(
-            recipes, many=True,
+            recipes,
+            many=True,
             context=context).data
 
     def get_recipes_count(self, obj):
+        """Подсчёт рецептов автора для поля recipes_coint."""
         return Recipe.objects.filter(author=obj).count()
