@@ -12,7 +12,7 @@ const About = ({ updateOrders, orders }) => {
     </MetaTags>
     
     <Container>
-      <h1 className={styles.title}>Привет!</h1>
+      <h1 className={styles.title}>Приветствую Вас!</h1>
       <div className={styles.content}>
         <div>
           <h2 className={styles.subtitle}>Что это за сайт?</h2>
@@ -38,10 +38,10 @@ const About = ({ updateOrders, orders }) => {
           </h2>
           <div className={styles.text}>
             <p className={styles.textItem}>
-              Код проекта находится тут - <a href="#" className={styles.textLink}>Github</a>
+              Код проекта находится тут - <a href="https://github.com/DmitryAlexandrov91/foodgram" className={styles.textLink}>https://github.com/DmitryAlexandrov91/foodgram</a>
             </p>
             <p className={styles.textItem}>
-              Автор проекта: <a href="#" className={styles.textLink}>Имя Автора</a>
+              Автор проекта: <a href="https://t.me/AlDmAl" className={styles.textLink}>Дмитрий Александров</a>
             </p>
           </div>
         </aside>
