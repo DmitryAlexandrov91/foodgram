@@ -66,3 +66,7 @@ Authorization: Token 930948dfa4a35f5f862a7391ea928669cc09dbc9
 ###
 DELETE http://127.0.0.1:8000/api/recipes/1/shopping_cart/
 Authorization: Token bd507ef41133c8913424548815c1a841b038b195
+
+###
+GET http://127.0.0.1:8000/api/recipes/1/get-link/
+Authorization: Token 7baeeb26fcc2ab2661a4266b5533d53bc61296eb

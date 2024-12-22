@@ -182,7 +182,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[],
     )
     def get_link(self, request, pk=None):
-        links = RecipeLinks.get(recipe_id=pk)
+        links = RecipeLinks.objects.get(recipe_id=pk)
         if links:
             return JsonResponse(
                 {'short-link': request.build_absolute_uri(
