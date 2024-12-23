@@ -1,42 +1,40 @@
 """Представления api проекта foodgram."""
 import csv
-import os
 
 from django.db.models import Sum
 from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404, redirect
-from django.http import FileResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse
+from djoser.views import UserViewSet
+from rest_framework import viewsets, status
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import viewsets, status
 from rest_framework.permissions import (
     SAFE_METHODS,
     IsAuthenticatedOrReadOnly,
     IsAuthenticated, AllowAny)
-from djoser.views import UserViewSet
 
-from foodgram.constants import CSV_FOLDER_PATH
 from recipes.models import (
     Favorite,
     Ingredient, IngredientInRecipe,
     Recipe, RecipeLinks,
     ShoppingCart, Tag)
+from users.models import User, Subscribe
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAuthorOrReadOnly
-from users.models import User, Subscribe
 from .serializers import (
-    ReadUserSerializer,
-    CreateUserSerializer,
-    AvatarSerializer,
-    TagSerializer,
-    ReadRecipeSerializer,
+    AvatarSerializer,  
     CreateRecipeSerializer,
+    CreateUserSerializer,
     IngredientSerializer,
+    ReadRecipeSerializer,
+    ReadUserSerializer,
+    ResetPasswordSerializer,
     ShoppingCartAndFavoriteSerializer,
     SubscribeSerializer,
-    ResetPasswordSerializer
+    TagSerializer
 )
 
 
@@ -206,22 +204,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             i["ingredient__measurement_unit"],
             i["amount"],
             i["recipe__name"]) for i in ingredients]
-        file_path = os.path.join(
-            CSV_FOLDER_PATH,
-            f'shopping_cart_{request.user.username}.csv')
-        with open(file_path, mode='w', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerow(
-                ['Ингредиент', 'Единица измерения', 'Количество', 'Рецепт']
-            )
-            for ingredient in shopping_cart:
-                writer.writerow(ingredient)
-        response = FileResponse(
-            open(file_path, 'rb'),
-            content_type='text/csv')
-        response[
-            'Content-Disposition'] = (
-                f'attachment; filename="{os.path.basename(file_path)}"')
+        response = HttpResponse(content_type='text/csv')
+        writer = csv.writer(response)
+        writer.writerow(
+            ['Ингредиент', 'Единица измерения',
+             'Количество', 'Рецепт'])
+        for ingredient in shopping_cart:
+            writer.writerow(ingredient)
         return response
 
     @action(
