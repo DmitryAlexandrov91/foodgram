@@ -2,8 +2,7 @@ import { Title, Container, Main } from '../../components'
 import styles from './styles.module.css'
 import MetaTags from 'react-meta-tags'
 
-// const About = ({ updateOrders, orders }) => {
-const About = () => {
+const About = ({ updateOrders, orders }) => {
   
   return <Main>
     <MetaTags>
