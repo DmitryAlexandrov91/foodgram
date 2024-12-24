@@ -39,8 +39,9 @@ class UserAdmin(admin.ModelAdmin):
         SubscribedAuthorInline
     )
 
-    list_display = ('id', 'username', 'email')
+    list_display = ('id', 'username', 'email', 'first_name')
     list_display_links = ('username',)
+    search_fields = ('first_name', 'email',)
 
 
 @admin.register(Subscribe)

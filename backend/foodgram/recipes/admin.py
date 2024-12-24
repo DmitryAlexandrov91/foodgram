@@ -60,7 +60,8 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ('id', 'pub_date', 'name', 'text')
     list_display_links = ('name',)
     fields = ('name', 'author', 'text', 'tags')
-    search_fields = ('name',)
+    search_fields = ('name', 'author')
+    list_filter = ('tags',)
 
 
 @admin.register(Tag)
