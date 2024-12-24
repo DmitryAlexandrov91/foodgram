@@ -6,7 +6,6 @@ from api.views import (
     CustomUserViewSet,
     IngredientViewSet,
     RecipeViewSet,
-    RedirectShortLink,
     TagViewSet)
 
 app_name = 'api'

@@ -1,10 +1,9 @@
 """Кастомные фильтры приложения api."""
 from django_filters import rest_framework
 
+from foodgram.constants import RECIPE_STATUS_CHOICES
 from recipes.models import Ingredient, Recipe
 from users.models import User
-
-from foodgram.constants import RECIPE_STATUS_CHOICES
 
 
 class IngredientFilter(rest_framework.FilterSet):
@@ -15,6 +14,8 @@ class IngredientFilter(rest_framework.FilterSet):
         lookup_expr='istartswith')
 
     class Meta:
+        """IngredientFilter метакласс."""
+
         model = Ingredient
         fields = ('name', )
 
@@ -50,5 +51,7 @@ class RecipeFilter(rest_framework.FilterSet):
         return queryset
 
     class Meta:
+        """RecipeFilter метакласс."""
+
         model = Recipe
         fields = ['author', 'tags', 'is_in_shopping_cart', 'is_favorited']

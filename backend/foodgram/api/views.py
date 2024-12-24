@@ -2,9 +2,9 @@
 import csv
 
 from django.db.models import Sum
-from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404, redirect
+from django.views import View
 from django.http import HttpResponse, JsonResponse
 from djoser.views import UserViewSet
 from rest_framework import viewsets, status
