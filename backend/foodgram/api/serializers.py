@@ -16,8 +16,7 @@ from recipes.models import (
     IngredientInRecipe,
     Recipe,
     ShoppingCart,
-    Tag,
-    )
+    Tag)
 from users.models import User, Subscribe
 
 
