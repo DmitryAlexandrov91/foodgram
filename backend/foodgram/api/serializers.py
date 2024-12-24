@@ -41,7 +41,7 @@ class AvatarSerializer(serializers.ModelSerializer):
         """AvatarSerializer метакласс."""
 
         model = User
-        fields = ['avatar',]
+        fields = ['avatar', ]
 
     def update(self, instance, validated_data):
         """Поведение бновления аватара при put запросе."""
@@ -136,7 +136,7 @@ class TagSerializer(serializers.ModelSerializer):
 
         model = Tag
         fields = '__all__'
-        read_only_fields = ['__all__',]
+        read_only_fields = ['__all__', ]
 
 
 class IngredientSerializer(serializers.ModelSerializer):
