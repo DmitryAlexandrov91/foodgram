@@ -24,6 +24,7 @@ from recipes.models import (
     ShoppingCart, Tag)
 from users.models import User, Subscribe
 from .filters import IngredientFilter, RecipeFilter
+from .pagination import RecipePagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (
     AvatarSerializer,
@@ -165,7 +166,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthorOrReadOnly]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    pagination_class = LimitOffsetPagination
+    pagination_class = RecipePagination
 
     def get_serializer_class(self):
         """Определяет класс сериализатора в зависимости от метода запроса."""
