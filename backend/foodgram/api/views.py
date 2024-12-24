@@ -26,7 +26,7 @@ from users.models import User, Subscribe
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (
-    AvatarSerializer,  
+    AvatarSerializer,
     CreateRecipeSerializer,
     CreateUserSerializer,
     IngredientSerializer,

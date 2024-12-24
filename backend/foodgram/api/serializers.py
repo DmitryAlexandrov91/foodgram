@@ -17,7 +17,7 @@ from recipes.models import (
     Recipe,
     ShoppingCart,
     Tag)
-from users.models import User, Subscribe
+from users.models import Subscribe, User
 
 
 class Base64ImageField(serializers.ImageField):

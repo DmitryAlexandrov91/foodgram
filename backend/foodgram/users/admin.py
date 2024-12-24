@@ -3,7 +3,7 @@ from django.contrib import admin
 
 from recipes.admin import FavoriteInline, ShoppingCartInline
 from recipes.models import Recipe
-from .models import User, Subscribe
+from .models import Subscribe, User
 
 
 class RecipeInline(admin.StackedInline):
