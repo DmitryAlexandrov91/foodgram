@@ -24,7 +24,7 @@ from recipes.models import (
     ShoppingCart, Tag)
 from users.models import User, Subscribe
 from .filters import IngredientFilter, RecipeFilter
-from .pagination import RecipePagination
+from .paginations import RecipePagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (
     AvatarSerializer,
