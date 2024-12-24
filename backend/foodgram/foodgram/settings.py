@@ -1,3 +1,4 @@
+"""Настройки проекта foodgram."""
 import os
 
 from django.core.management.utils import get_random_secret_key
@@ -72,13 +73,6 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', 5432)
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 AUTH_USER_MODEL = 'users.User'
 

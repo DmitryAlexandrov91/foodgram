@@ -29,10 +29,13 @@ class Ingredient(models.Model):
     )
 
     class Meta:
+        """Ingredient метакласс."""
+
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
+        """Возвращает называние ингредиента и его ед. измерения."""
         return f'{self.name}, {self.measurement_unit}'
 
 
@@ -53,10 +56,13 @@ class Tag(models.Model):
     )
 
     class Meta:
+        """Tag метакласс."""
+
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
     def __str__(self):
+        """Возвращает название тега."""
         return self.name
 
 
@@ -103,11 +109,14 @@ class Recipe(models.Model):
     )
 
     class Meta:
+        """Recipe метакласс."""
+
         ordering = ('-pub_date',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
     def __str__(self):
+        """Возвращает название рецепта."""
         return self.name
 
 
@@ -127,10 +136,13 @@ class Favorite(models.Model):
     )
 
     class Meta:
+        """Favorite метакласс."""
+
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
 
     def __str__(self):
+        """Возвращает название рецепта и юзерннейм юзера."""
         return f'Рецепт {self.recipe} в избранном у {self.user}'
 
 
@@ -150,10 +162,13 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
+        """ShoppingCart метакласс."""
+
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Список покупок'
 
     def __str__(self):
+        """Возвращает название рецепта и юзернейм юзера."""
         return f'"{self.recipe}" в списке покупок у {self.user}'
 
 
@@ -182,10 +197,13 @@ class IngredientInRecipe(models.Model):
     )
 
     class Meta:
+        """IngredientInRecipe метакласс."""
+
         verbose_name = 'Ингредиенты в рецепте'
         verbose_name_plural = 'Ингредиенты в рецепте'
 
     def __str__(self):
+        """Вовзращает id рецпта и его название."""
         return f'№{self.recipe.id} "{self.recipe.name}"'
 
 
@@ -204,14 +222,18 @@ class RecipeLinks(models.Model):
     )
 
     class Meta:
+        """RecipeLinks метакласс."""
+
         verbose_name = 'ссылки'
         verbose_name_plural = 'ссылки'
 
     def __str__(self):
+        """Взвращает короткую ссылку."""
         return self.short_link
 
     @receiver(models.signals.post_save, sender=Recipe)
     def get_short_link(sender, instance, created, **kwargs):
+        """Создаёт короткую ссылку при создании рецепта."""
         if created:
             RecipeLinks.objects.create(
                 short_link=shortuuid.ShortUUID().random(

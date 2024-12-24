@@ -1,4 +1,4 @@
-"""App for db load."""
+"""Приложение для загрузки данных в бд."""
 import csv
 
 from django.apps import apps
@@ -6,16 +6,16 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    """Command class."""
+    """Класс Command."""
 
-    help = 'Closes the specified poll for voting'
+    help = 'Название модели должно полностью совпадать с названием файла csv'
 
     def add_arguments(self, parser):
-        """Add csv file path as argument."""
+        """Добавляет csv файл как аргумент."""
         parser.add_argument('path', type=str)
 
     def handle(self, *args, **options):
-        """To content db handler."""
+        """Хэндлер для заполнения БД."""
         models = apps.get_models()
         name = options['path'].split('/')[-1].split('.')[0]
         for model in models:
