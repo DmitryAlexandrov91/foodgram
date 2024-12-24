@@ -1,9 +1,9 @@
-# name: Main Foodgram workflow
+name: Main Foodgram workflow
 
-# on:
-#   push:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   tests:
@@ -144,6 +144,8 @@ jobs:
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
           sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
+          sudo docker rmi $(docker images -f "dangling=true" -q)
+
 
   send_message:
     runs-on: ubuntu-latest
