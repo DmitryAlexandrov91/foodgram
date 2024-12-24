@@ -3,18 +3,19 @@ import csv
 
 from django.db.models import Sum
 from django_filters.rest_framework import DjangoFilterBackend
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
-from django.http import HttpResponse, JsonResponse
 from djoser.views import UserViewSet
-from rest_framework import viewsets, status
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (
-    SAFE_METHODS,
+    AllowAny,
     IsAuthenticatedOrReadOnly,
-    IsAuthenticated, AllowAny)
+    IsAuthenticated,
+    SAFE_METHODS)
+from rest_framework.response import Response
 
 from recipes.models import (
     Favorite,
@@ -46,6 +47,7 @@ class CustomUserViewSet(UserViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly,]
 
     def get_serializer_class(self):
+        """Определяет класс сериализатора в зависимости от действия."""
         if self.action == 'create':
             return CreateUserSerializer
         return ReadUserSerializer
@@ -55,6 +57,7 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def me(self, request):
+        """Определяет поведение при GET запросе к /me."""
         serializer = ReadUserSerializer(
             request.user,
             context={'request': request})
@@ -64,6 +67,7 @@ class CustomUserViewSet(UserViewSet):
         detail=False,
         methods=['post'])
     def set_password(self, request):
+        """Определяет поведение при POST запросе к /set_password."""
         serializer = ResetPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = request.user
@@ -79,6 +83,7 @@ class CustomUserViewSet(UserViewSet):
         detail=False,
         url_path='me/avatar')
     def avatar(self, request):
+        """Определяет поведение при запросе к /avatar."""
         if request.method == 'DELETE':
             request.user.avatar.delete()
             return Response(
@@ -96,6 +101,7 @@ class CustomUserViewSet(UserViewSet):
         url_path='subscriptions',
     )
     def subscriptions(self, request):
+        """Определяет поведение при GET запросе к /subscriptions."""
         queryset = User.objects.filter(
             subscribed_author__user=request.user)
         paginated_queryset = self.paginate_queryset(queryset)
@@ -111,6 +117,7 @@ class CustomUserViewSet(UserViewSet):
         url_path='subscribe'
     )
     def subscribe(self, request, id=None):
+        """Определяет поведение при POST/DELETE запросах к /subscribe."""
         author = get_object_or_404(User, pk=id)
         user = self.request.user
         if request.method == 'POST':
@@ -144,6 +151,7 @@ class CustomUserViewSet(UserViewSet):
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     """Представление для эндпоинта tags."""
+
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = []
@@ -159,14 +167,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
+        """Определяет класс сериализатора в зависимости от метода запроса."""
         if self.action in SAFE_METHODS:
             return ReadRecipeSerializer
         return CreateRecipeSerializer
 
     def perform_create(self, serializer):
+        """Добавляет поле author в сериализатор."""
         serializer.save(author=self.request.user)
 
     def destroy(self, request, pk=None):
+        """Определяет поведение при удалении объекта."""
         recipe = Recipe.objects.filter(pk=pk)
         recipe.delete()
         return Response(
@@ -180,6 +191,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[],
     )
     def get_link(self, request, pk=None):
+        """Определяет поведение при GET запросе к /get-link."""
         links = RecipeLinks.objects.get(recipe_id=pk)
         if links:
             return JsonResponse(
@@ -193,6 +205,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=False,
             url_path='download_shopping_cart')
     def download_shopping_cart(self, request):
+        """Определяет поведение при GET запросе к /download_shopping_cart."""
         ingredients = IngredientInRecipe.objects.filter(
             recipe__shopping_cart__user=request.user).values(
                 'ingredient__name',
@@ -219,6 +232,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         methods=['post', 'delete']
     )
     def shopping_cart(self, request, pk=None):
+        """Опредеделяет поведение при POST/DELETE запросах к /shopping_cart."""
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
             serializer = ShoppingCartAndFavoriteSerializer(
@@ -253,6 +267,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_path='favorite'
     )
     def favorite(self, request, pk=None):
+        """Определяет поведение при POST/DELETE запросах к /favorite."""
         recipe = get_object_or_404(Recipe, id=pk)
         favorite = Favorite.objects.filter(
             user=request.user,
@@ -297,6 +312,7 @@ class RedirectShortLink(View):
     permission_classes = []
 
     def get(self, request, short_link):
+        """Получает пороткую ссылку из БД и редиректит на полную."""
         link = get_object_or_404(
             RecipeLinks,
             short_link=short_link
