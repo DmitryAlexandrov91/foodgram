@@ -26,8 +26,7 @@ class RecipeFilter(rest_framework.FilterSet):
         queryset=User.objects.all()
     )
     tags = rest_framework.AllValuesMultipleFilter(
-        field_name='tags__slug',
-        label='Ссылка'
+        field_name='tags__slug'
     )
 
     is_in_shopping_cart = rest_framework.ChoiceFilter(

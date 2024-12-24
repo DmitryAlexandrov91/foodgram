@@ -146,3 +146,5 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.AllowAny'],
     },
 }
+
+CSRF_TRUSTED_ORIGINS = ['https://aldmal.zapto.org']
