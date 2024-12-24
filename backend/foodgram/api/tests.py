@@ -5,7 +5,7 @@ from django.test import Client, TestCase
 
 
 class FoodgramAPITestCase(TestCase):
-    """Класс проверки api foodgram на получение списка рецептов и юзеров."""
+    """Класс тестирования api foodgram."""
 
     def setUp(self):
         """Создаёт атрибут класса guest_client."""
