@@ -77,9 +77,9 @@ class ReadUserSerializer(UserSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return Subscribe.objects.filter(
-            user=request.user,
-            author=obj).exists()
+        return request.user.follower.filter(
+            author=obj
+        ).exists()
 
 
 class CreateUserSerializer(UserCreateSerializer):
@@ -101,10 +101,7 @@ class CreateUserSerializer(UserCreateSerializer):
 
     def validate_username(self, value):
         """Валидация поля username."""
-        is_mutch = (re.match(
-            USERNAME_PATTERN,
-            value))
-        if not is_mutch:
+        if not re.match(USERNAME_PATTERN, value):
             raise ValidationError(f'Имя пользователя {value} недопустимо!')
         if User.objects.filter(username=value).exists():
             raise ValidationError(
