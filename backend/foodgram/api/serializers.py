@@ -247,8 +247,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         """Валидация поля ingredients."""
         if not value:
             raise ValidationError('Рецепт не может быть без ингредиентов!')
-        ingredients_list = [_['id'] for _ in value]
-        if len(ingredients_list) != len(set(ingredients_list)):
+        ingredients = [_['id'] for _ in value]
+        if len(ingredients) != len(set(ingredients)):
             raise ValidationError('Ингредиенты не должны повторяться!')
         return value
 

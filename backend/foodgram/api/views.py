@@ -23,6 +23,7 @@ from recipes.models import (
     Recipe, RecipeLinks,
     ShoppingCart, Tag)
 from users.models import User, Subscribe
+from .utils import get_report_responce
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import RecipePagination
 from .permissions import IsAuthorOrReadOnly
@@ -214,19 +215,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 'ingredient__measurement_unit',
                 'recipe__name').annotate(
                 amount=Sum('amount')).order_by('recipe__name')
-        shopping_cart = [(
-            i["ingredient__name"],
-            i["ingredient__measurement_unit"],
-            i["amount"],
-            i["recipe__name"]) for i in ingredients]
-        response = HttpResponse(content_type='text/csv')
-        writer = csv.writer(response)
-        writer.writerow(
-            ['Ингредиент', 'Единица измерения',
-             'Количество', 'Рецепт'])
-        for ingredient in shopping_cart:
-            writer.writerow(ingredient)
-        return response
+        return get_report_responce(ingredients)
 
     @action(
         detail=True,
