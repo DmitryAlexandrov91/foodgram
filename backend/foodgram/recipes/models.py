@@ -11,7 +11,8 @@ from foodgram.constants import (
     MAX_RECIPELINKS_SHORTLINK_LENGHT,
     MAX_INGREDIENT_MEASUREMENT_UNIT_LENGHT,
     MAX_INGREDIENT_NAME_LENGHT,
-    MAX_TAG_NAME_LENGHT)
+    MAX_TAG_NAME_LENGHT,
+    TAG_SLUG_REGEX)
 from users.models import User
 
 
@@ -51,7 +52,7 @@ class Tag(models.Model):
         'Слаг тэга',
         unique=True,
         validators=[validators.RegexValidator(
-            regex='^[-a-zA-Z0-9_]+$',
+            regex=TAG_SLUG_REGEX,
             message='Недопустимый слаг.')]
     )
 
