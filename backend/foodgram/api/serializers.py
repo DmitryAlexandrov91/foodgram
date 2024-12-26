@@ -11,13 +11,11 @@ from foodgram.constants import (
     USERNAME_PATTERN,
     MIN_RECIPE_COOKING_TIME)
 from recipes.models import (
-    Favorite,
     Ingredient,
     IngredientInRecipe,
     Recipe,
-    ShoppingCart,
     Tag)
-from users.models import Subscribe, User
+from users.models import User
 
 
 class Base64ImageField(serializers.ImageField):
@@ -249,7 +247,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         """Валидация поля ingredients."""
         if not value:
             raise ValidationError('Рецепт не может быть без ингредиентов!')
-        if any(value.count(item) > 1 for item in value):
+        ingredients_list = [_['id'] for _ in value]
+        if len(ingredients_list) != len(set(ingredients_list)):
             raise ValidationError('Ингредиенты не должны повторяться!')
         return value
 
@@ -257,7 +256,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         """Валидация поля tags."""
         if not value:
             raise ValidationError('Необходимо выбрать хотя бы один тег!')
-        if any(value.count(item) > 1 for item in value):
+        if len(value) != len(set(value)):
             raise ValidationError('Теги не должны повторяться!')
         return value
 
