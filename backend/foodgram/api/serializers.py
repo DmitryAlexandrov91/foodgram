@@ -182,21 +182,23 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         exclude = ['pub_date']
 
-    def get_is_favorited(self, obj):
-        """Возвращает True или False если объект в избранном."""
+    def get_is(self, obj, queryset):
+        """DRY функция."""
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return Favorite.objects.filter(recipe=obj,
-                                       user=request.user).exists()
+        return queryset(
+            recipe=obj,
+            user=request.user
+        ).exists()
+
+    def get_is_favorited(self, obj):
+        """Возвращает True если объект в избранном."""
+        return self.get_is(obj, obj.favorite.filter)
 
     def get_is_in_shopping_cart(self, obj):
-        """Возвращает True или False если объект в корзине покупок."""
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        return ShoppingCart.objects.filter(recipe=obj,
-                                           user=request.user).exists()
+        """Возвращает True если объект в корзине покупок."""
+        return self.get_is(obj, obj.shopping_cart.filter)
 
 
 class CreateIngredientInRecipeSerializer(serializers.ModelSerializer):
@@ -238,7 +240,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             if 'tags' not in data:
                 raise serializers.ValidationError(
                     'В запросе нет поля tags!')
-            if "ingredients" not in data:
+            if 'ingredients' not in data:
                 raise serializers.ValidationError(
                     'В запросе нет поля ingredients!')
         return data
