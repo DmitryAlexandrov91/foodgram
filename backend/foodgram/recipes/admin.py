@@ -43,7 +43,6 @@ class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit')
     list_editable = ('measurement_unit',)
     list_display_links = ('name',)
-    list_filter = ('name',)
     search_fields = ('name',)
 
 

@@ -14,6 +14,7 @@ MAX_TAG_NAME_LENGHT = 32
 MAX_RECIPELINKS_SHORTLINK_LENGHT = 5
 USERNAME_PATTERN = r'^[\w.@+-]+\Z'
 PAGINATION_PAGE_SIZE = 10
+MAX_RECIPE_PER_PAGE = 6
 BASE_DIR = Path(__file__).resolve().parent.parent
 CSV_FOLDER_PATH = os.path.join(BASE_DIR, 'media\\shopping_carts')
 RECIPE_STATUS_CHOICES = (
