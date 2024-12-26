@@ -74,7 +74,7 @@ class Recipe(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор',
-        related_name='author'
+        related_name='recipes'
     )
     pub_date = models.DateTimeField(
         'Дата публикации рецепта',
@@ -141,6 +141,10 @@ class Favorite(models.Model):
 
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
+        constraints = [models.UniqueConstraint(
+            fields=['user', 'recipe'],
+            name='unique_favorite'
+        )]
 
     def __str__(self):
         """Возвращает название рецепта и юзерннейм юзера."""
@@ -167,6 +171,10 @@ class ShoppingCart(models.Model):
 
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Список покупок'
+        constraints = [models.UniqueConstraint(
+            fields=['user', 'recipe'],
+            name='unique_shopping_cart'
+        )]
 
     def __str__(self):
         """Возвращает название рецепта и юзернейм юзера."""
