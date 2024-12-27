@@ -4,6 +4,7 @@ import re
 
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
@@ -277,6 +278,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                 amount=ingredient.get('amount')
             ) for ingredient in ingredients])
 
+    @transaction.atomic(durable=True)
     def create(self, validated_data):
         """Поведение при создании рецепта."""
         tags = validated_data.pop('tags')
@@ -286,6 +288,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
         return recipe
 
+    @transaction.atomic(durable=True)
     def update(self, instance, validated_data):
         """Поведение при обновлении рецепта."""
         recipe = instance
