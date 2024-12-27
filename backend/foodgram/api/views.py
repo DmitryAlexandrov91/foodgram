@@ -217,13 +217,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 amount=Sum('amount')).order_by('recipe__name')
         return get_report_responce(ingredients)
 
-    @action(
-        detail=True,
-        url_path='shopping_cart',
-        methods=['post', 'delete']
-    )
-    def shopping_cart(self, request, pk=None):
-        """Опредеделяет поведение при POST/DELETE запросах к /shopping_cart."""
+    def to_create_delete(self, request, model, pk=None):
+        """Вспомогательная DRY функция для shopping_cart и favorite."""
         recipe = get_object_or_404(Recipe, id=pk)
         if request.method == 'POST':
             serializer = ShoppingCartAndFavoriteSerializer(
@@ -231,25 +226,35 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 data=request.data
             )
             serializer.is_valid(raise_exception=True)
-            if ShoppingCart.objects.filter(
+            if model.objects.filter(
                 user=request.user, recipe=recipe
             ).exists():
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-            ShoppingCart.objects.create(user=request.user, recipe=recipe)
+            model.objects.create(user=request.user, recipe=recipe)
             modified_data = {
                 **serializer.data,
                 'image': request.build_absolute_uri(
-                    recipe.image.url)}
-            return Response(
-                modified_data,
-                status=status.HTTP_201_CREATED)
+                    recipe.image.url
+                )
+            }
+            return Response(modified_data, status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
-            recipe_in_shopping_cart = ShoppingCart.objects.filter(
-                user=request.user, recipe=recipe)
-            if recipe_in_shopping_cart:
-                recipe_in_shopping_cart.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            object = get_object_or_404(
+                model,
+                user=request.user,
+                recipe=recipe
+            )
+            object.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        detail=True,
+        url_path='shopping_cart',
+        methods=['post', 'delete']
+    )
+    def shopping_cart(self, request, pk=None):
+        """Обрабатывает POST/DELETE запросы к /shopping_cart."""
+        return self.to_create_delete(request, ShoppingCart, pk)
 
     @action(
         detail=True,
@@ -258,30 +263,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_path='favorite'
     )
     def favorite(self, request, pk=None):
-        """Определяет поведение при POST/DELETE запросах к /favorite."""
-        recipe = get_object_or_404(Recipe, id=pk)
-        favorite = Favorite.objects.filter(
-            user=request.user,
-            recipe__id=pk)
-        if request.method == 'POST':
-            if favorite.exists():
-                return Response(
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            Favorite.objects.create(user=request.user, recipe=recipe)
-            serializer = ShoppingCartAndFavoriteSerializer(
-                recipe,
-                context={'request': request})
-            modified_data = {
-                **serializer.data,
-                'image': request.build_absolute_uri(
-                    recipe.image.url)}
-            return Response(modified_data, status=status.HTTP_201_CREATED)
-        if request.method == 'DELETE':
-            if favorite.exists():
-                favorite.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        """Обрабатывает POST/DELETE запросы к /favorite."""
+        return self.to_create_delete(request, Favorite, pk)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
