@@ -61,7 +61,6 @@ class CustomUserViewSet(UserViewSet):
         serializer = ReadUserSerializer(
             request.user,
             context={'request': request})
-        print(request.user.username)
         return Response(serializer.data)
 
     @action(
@@ -144,7 +143,8 @@ class CustomUserViewSet(UserViewSet):
             )
             if subscription.exists():
                 subscription.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
+                return Response(
+                    status=status.HTTP_204_NO_CONTENT)
             return Response(
                 {"errors": "Вы не подписаны на этого пользователя."},
                 status=status.HTTP_400_BAD_REQUEST)

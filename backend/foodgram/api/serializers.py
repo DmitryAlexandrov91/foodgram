@@ -43,7 +43,7 @@ class AvatarSerializer(serializers.ModelSerializer):
         fields = ['avatar', ]
 
     def update(self, instance, validated_data):
-        """Поведение бновления аватара при put запросе."""
+        """Поведение обновления аватара при put запросе."""
         instance.avatar = validated_data.get(
             'avatar')
         instance.save()
@@ -292,22 +292,13 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         """Поведение при обновлении рецепта."""
         recipe = instance
-        instance.image = validated_data.get('image', instance.image)
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.name)
-        instance.cooking_time = validated_data.get(
-            'cooking_time',
-            instance.cooking_time
-        )
-        instance.tags.clear()
-        instance.ingredients.clear()
-        tags = validated_data.get('tags')
-        instance.tags.set(tags)
-        ingredients = validated_data.get('ingredients')
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredients')
         IngredientInRecipe.objects.filter(recipe=recipe).delete()
         self.create_ingredient_in_recipe(ingredients, recipe)
-        instance.save()
-        return instance
+        updated_instance = super().update(instance, validated_data)
+        updated_instance.tags.set(tags)
+        return updated_instance
 
     def to_representation(self, instance):
         """Переопределяет вид ответа от api."""
@@ -334,7 +325,8 @@ class SubscribeSerializer(ReadUserSerializer):
     """Сериализатор для подписок."""
 
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
+    recipes_count = serializers.ReadOnlyField(
+        source='recipes.count')
 
     class Meta:
         """SubscribeSerializer метакласс."""
@@ -359,21 +351,13 @@ class SubscribeSerializer(ReadUserSerializer):
         if recipes_limit:
             try:
                 limit = int(recipes_limit)
-                recipes = Recipe.objects.filter(
-                    author=obj)[:limit]
+                recipes = obj.recipes.all()[:limit]
             except ValueError:
-                recipes = Recipe.objects.filter(
-                    author=obj)
+                recipes = obj.recipes.all()
         else:
-            recipes = Recipe.objects.filter(
-                author=obj
-            )
+            recipes = obj.recipes.all()
         context = {'request': request}
         return ShoppingCartAndFavoriteSerializer(
             recipes,
             many=True,
             context=context).data
-
-    def get_recipes_count(self, obj):
-        """Определяет ззначение поля recipes_count."""
-        return Recipe.objects.filter(author=obj).count()
