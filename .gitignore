@@ -1,3 +1,10 @@
+postman_collection/
+frontend/
+nginx/
+docs/
+data/
+infra/
+
 frontend/node_modules
 infra/frontend/build
 .env
@@ -141,5 +148,3 @@ dmypy.json
 static/
 media/
 
-
-.postman_collection/
