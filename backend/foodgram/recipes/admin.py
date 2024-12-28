@@ -16,6 +16,7 @@ class IngredientInRecipeInline(admin.StackedInline):
 
     model = IngredientInRecipe
     extra = 1
+    min_num = 1
 
 
 class ShoppingCartInline(admin.StackedInline):
@@ -64,9 +65,9 @@ class RecipeAdmin(admin.ModelAdmin):
 
     def in_favorite(self, obj):
         """Return a list of genres of the title."""
-        return obj.favorite.count()
+        return f'{obj.favorite.count()} польз.'
 
-    in_favorite.short_description = 'В избранном у юзеров'
+    in_favorite.short_description = 'В избранное добавили'
 
 
 @admin.register(Tag)

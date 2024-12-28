@@ -186,18 +186,18 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return queryset(
+        return queryset.filter(
             recipe=obj,
             user=request.user
         ).exists()
 
     def get_is_favorited(self, obj):
         """Возвращает True если объект в избранном."""
-        return self.get_is(obj, obj.favorite.filter)
+        return self.get_is(obj, obj.favorite)
 
     def get_is_in_shopping_cart(self, obj):
         """Возвращает True если объект в корзине покупок."""
-        return self.get_is(obj, obj.shopping_cart.filter)
+        return self.get_is(obj, obj.shopping_cart)
 
 
 class CreateIngredientInRecipeSerializer(serializers.ModelSerializer):
