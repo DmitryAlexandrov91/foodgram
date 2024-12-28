@@ -2,9 +2,6 @@
 import csv
 
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from requests import Response
-from rest_framework import status
 
 
 def get_report_responce(ingredients):
