@@ -56,11 +56,17 @@ class RecipeAdmin(admin.ModelAdmin):
         FavoriteInline
     )
 
-    list_display = ('id', 'pub_date', 'name', 'text')
+    list_display = ('name', 'author', 'in_favorite')
     list_display_links = ('name',)
     fields = ('name', 'author', 'text', 'tags')
-    search_fields = ('name', 'author')
+    search_fields = ('name', 'author__username')
     list_filter = ('tags',)
+
+    def in_favorite(self, obj):
+        """Return a list of genres of the title."""
+        return obj.favorite.count()
+
+    in_favorite.short_description = 'В избранном у юзеров'
 
 
 @admin.register(Tag)
