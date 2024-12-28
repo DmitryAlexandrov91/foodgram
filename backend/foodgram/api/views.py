@@ -15,13 +15,13 @@ from rest_framework.permissions import (
     SAFE_METHODS)
 from rest_framework.response import Response
 
+from .utils import get_report_responce
 from recipes.models import (
     Favorite,
     Ingredient, IngredientInRecipe,
     Recipe, RecipeLinks,
     ShoppingCart, Tag)
 from users.models import User, Subscribe
-from .utils import get_report_responce, to_create_del
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import RecipePagination
 from .permissions import IsAuthorOrReadOnly
@@ -61,6 +61,7 @@ class CustomUserViewSet(UserViewSet):
         serializer = ReadUserSerializer(
             request.user,
             context={'request': request})
+        print(request.user.username)
         return Response(serializer.data)
 
     @action(
