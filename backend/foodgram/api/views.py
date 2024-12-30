@@ -121,11 +121,12 @@ class CustomUserViewSet(UserViewSet):
         author = get_object_or_404(User, pk=id)
         user = self.request.user
         serializer = SubscribeSerializer(
-                author,
-                data={'user': user},
-                context={'request': request,
-                         'author': author}
-            )
+            author,
+            data={'user': user},
+            context={
+                'request': request,
+                'author': author}
+        )
         serializer.is_valid(raise_exception=True)
         if request.method == 'POST':
             Subscribe.objects.create(author=author, user=user)
