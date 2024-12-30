@@ -4,7 +4,7 @@ import csv
 from django.http import HttpResponse
 
 
-def get_report_responce(ingredients):
+def get_report_response(ingredients):
     """Вспомогательная функция для выдачи корзины покупок."""
     shopping_cart = [(
         i["ingredient__name"],

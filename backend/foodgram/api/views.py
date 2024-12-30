@@ -15,7 +15,7 @@ from rest_framework.permissions import (
     SAFE_METHODS)
 from rest_framework.response import Response
 
-from .utils import get_report_responce
+from .utils import get_report_response
 from recipes.models import (
     Favorite,
     Ingredient, IngredientInRecipe,
@@ -167,15 +167,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Добавляет поле author в сериализатор."""
         serializer.save(author=self.request.user)
 
-    def destroy(self, request, pk=None):
-        """Определяет поведение при удалении объекта."""
-        recipe = Recipe.objects.filter(pk=pk)
-        recipe.delete()
-        return Response(
-            {'detail': 'Рецепт успешно удалён'},
-            status=status.HTTP_204_NO_CONTENT
-        )
-
     @action(
         detail=True,
         url_path='get-link',
@@ -183,13 +174,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def get_link(self, request, pk=None):
         """Определяет поведение при GET запросе к /get-link."""
-        links = RecipeLinks.objects.get(recipe_id=pk)
+        links = get_object_or_404(RecipeLinks, recipe_id=pk)
         if links:
             return JsonResponse(
                 {'short-link': request.build_absolute_uri(
                     f'/s/{links.short_link}')})
         return JsonResponse(
-            {"detail": f"Рецепт с ID {pk} не найден."},
+            {'detail': f'Рецепт с ID {pk} не найден.'},
             status=status.HTTP_404_NOT_FOUND
         )
 
@@ -203,7 +194,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 'ingredient__measurement_unit',
                 'recipe__name').annotate(
                 amount=Sum('amount')).order_by('recipe__name')
-        return get_report_responce(ingredients)
+        return get_report_response(ingredients)
 
     def to_create_delete(self, request, model, pk=None):
         """Вспомогательная DRY функция для shopping_cart и favorite."""
