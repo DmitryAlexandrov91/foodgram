@@ -16,7 +16,7 @@ class FoodgramAPITestCase(TestCase):
         response = self.guest_client.get('/api/recipes/')
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_task_creation(self):
+    def test_users_list(self):
         """Проверка доступности списка юзеров."""
         response = self.guest_client.get('/api/users/')
         self.assertEqual(response.status_code, HTTPStatus.OK)

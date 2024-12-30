@@ -121,20 +121,14 @@ class CustomUserViewSet(UserViewSet):
         author = get_object_or_404(User, pk=id)
         user = self.request.user
         if request.method == 'POST':
-            if author == user:
-                return Response(
-                    {"errors": "Нельзя подписаться на самого себя."},
-                    status=status.HTTP_400_BAD_REQUEST)
-            if Subscribe.objects.filter(
-                author=author, user=user
-            ).exists():
-                return Response(
-                    {"errors": "Вы уже подписаны на этого пользователя."},
-                    status=status.HTTP_400_BAD_REQUEST)
-            Subscribe.objects.create(author=author, user=user)
             serializer = SubscribeSerializer(
                 author,
-                context={'request': request})
+                data={'user': user},
+                context={'request': request,
+                         'author': author}
+            )
+            serializer.is_valid(raise_exception=True)
+            Subscribe.objects.create(author=author, user=user)
             return Response(serializer.data,
                             status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':

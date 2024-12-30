@@ -17,6 +17,5 @@ def get_report_responce(ingredients):
     writer.writerow(
         ['Ингредиент', 'Единица измерения',
             'Количество', 'Рецепт'])
-    for ingredient in shopping_cart:
-        writer.writerow(ingredient)
+    writer.writerows(shopping_cart)
     return response
