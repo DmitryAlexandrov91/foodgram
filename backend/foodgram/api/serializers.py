@@ -349,11 +349,11 @@ class SubscribeSerializer(ReadUserSerializer):
     def validate(self, data):
         """Проверка подписки на самого себя и повторной подписки."""
         author = self.context.get('author')
-        user = self.context.get('request').user
-        is_subscribed = user.follower.filter(
+        request = self.context.get('request')
+        is_subscribed = request.user.follower.filter(
             author=author).exists()
-        if self.context.get('request').method == 'POST':
-            if user == author:
+        if request.method == 'POST':
+            if request.user == author:
                 raise ValidationError(
                     {'errors': 'Нельзя подписаться на самого себя!'}
                 )
@@ -361,7 +361,7 @@ class SubscribeSerializer(ReadUserSerializer):
                 raise ValidationError(
                     {'errors': 'Вы уже подписаны на этого автора!'}
                 )
-        if self.context.get('request').method == 'DELETE':
+        if request.method == 'DELETE':
             if not is_subscribed:
                 raise ValidationError(
                     {'errors': 'Вы не подписаны на этого автора!'}
