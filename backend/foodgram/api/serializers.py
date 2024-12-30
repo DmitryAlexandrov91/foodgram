@@ -5,9 +5,8 @@ import re
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from rest_framework import serializers, status
+from rest_framework import serializers
 
 from foodgram.constants import (
     USERNAME_PATTERN,
@@ -17,7 +16,7 @@ from recipes.models import (
     IngredientInRecipe,
     Recipe,
     Tag)
-from users.models import User, Subscribe
+from users.models import User
 
 
 class Base64ImageField(serializers.ImageField):
@@ -351,14 +350,22 @@ class SubscribeSerializer(ReadUserSerializer):
         """Проверка подписки на самого себя и повторной подписки."""
         author = self.context.get('author')
         user = self.context.get('request').user
-        if user == author:
-            raise ValidationError(
-                {'errors': 'Нельзя подписаться на самого себя!'}
-            )
-        if Subscribe.objects.filter(user=user, author=author).exists():
-            raise ValidationError(
-                {'errors': 'Вы уже подписаны на этого автора!'}
-            )
+        is_subscribed = user.follower.filter(
+            author=author).exists()
+        if self.context.get('request').method == 'POST':
+            if user == author:
+                raise ValidationError(
+                    {'errors': 'Нельзя подписаться на самого себя!'}
+                )
+            if is_subscribed:
+                raise ValidationError(
+                    {'errors': 'Вы уже подписаны на этого автора!'}
+                )
+        if self.context.get('request').method == 'DELETE':
+            if not is_subscribed:
+                raise ValidationError(
+                    {'errors': 'Вы не подписаны на этого автора!'}
+                )
         return data
 
     def get_recipes(self, obj):

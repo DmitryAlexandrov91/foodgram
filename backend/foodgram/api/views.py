@@ -120,28 +120,23 @@ class CustomUserViewSet(UserViewSet):
         """Определяет поведение при POST/DELETE запросах к /subscribe."""
         author = get_object_or_404(User, pk=id)
         user = self.request.user
-        if request.method == 'POST':
-            serializer = SubscribeSerializer(
+        serializer = SubscribeSerializer(
                 author,
                 data={'user': user},
                 context={'request': request,
                          'author': author}
             )
-            serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)
+        if request.method == 'POST':
             Subscribe.objects.create(author=author, user=user)
             return Response(serializer.data,
                             status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
-            subscription = Subscribe.objects.filter(
-                author=author, user=user
-            )
-            if subscription.exists():
-                subscription.delete()
-                return Response(
-                    status=status.HTTP_204_NO_CONTENT)
+            user.follower.filter(
+                author=author
+            ).delete()
             return Response(
-                {"errors": "Вы не подписаны на этого пользователя."},
-                status=status.HTTP_400_BAD_REQUEST)
+                status=status.HTTP_204_NO_CONTENT)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
