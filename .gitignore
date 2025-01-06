@@ -2,11 +2,11 @@ frontend/node_modules
 infra/frontend/build
 .env
 
-data/
-docs/
-frontend/
-infra/
-postman_collection/
+# data/
+# docs/
+# frontend/
+# infra/
+# postman_collection/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
