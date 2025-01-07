@@ -64,7 +64,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('tags',)
 
     def in_favorite(self, obj):
-        """Return a list of genres of the title."""
+        """Возвращает число раз в избранном."""
         return f'{obj.favorite.count()} польз.'
 
     in_favorite.short_description = 'В избранное добавили'
