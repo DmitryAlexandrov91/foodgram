@@ -57,7 +57,7 @@ class RecipeAdmin(admin.ModelAdmin):
         FavoriteInline
     )
 
-    list_display = ('name', 'author', 'in_favorite')
+    list_display = ('name', 'author', 'in_favorite', 'pub_date')
     list_display_links = ('name',)
     fields = ('name', 'author', 'text', 'tags')
     search_fields = ('name', 'author__username')

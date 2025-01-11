@@ -16,7 +16,7 @@ from recipes.models import (
     IngredientInRecipe,
     Recipe,
     Tag)
-from users.models import User
+from users.models import Subscribe, User
 
 
 class Base64ImageField(serializers.ImageField):
@@ -345,6 +345,10 @@ class SubscribeSerializer(ReadUserSerializer):
         )
         read_only_fields = ('email', 'username', 'first_name',
                             'last_name',)
+
+    def create(self, validated_data):
+        """Создаёт объект подписки."""
+        return Subscribe.objects.create(**validated_data)
 
     def validate(self, data):
         """Проверка подписки на самого себя и повторной подписки."""

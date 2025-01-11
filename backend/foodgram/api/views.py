@@ -129,9 +129,11 @@ class CustomUserViewSet(UserViewSet):
         )
         serializer.is_valid(raise_exception=True)
         if request.method == 'POST':
-            Subscribe.objects.create(author=author, user=user)
+            serializer.create(validated_data={'author': author, 'user': user})
+            serializer.save()
             return Response(serializer.data,
                             status=status.HTTP_201_CREATED)
+
         if request.method == 'DELETE':
             user.follower.filter(
                 author=author
